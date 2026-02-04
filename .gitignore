@@ -1,0 +1,5 @@
+.DS_Store
+.claude/
+.vscode/
+.gemini/
+node_modules/
