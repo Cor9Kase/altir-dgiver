@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finn riktig fiberpakke | Altifiber</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --altifiber-red: #ee4238;
+            --altifiber-red-hover: #d93a31;
+            --altifiber-dark: #302322;
+            --white: #ffffff;
+            --gray-light: #f5f5f5;
+            --gray-medium: #e0e0e0;
+            --gray-text: #666666;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--gray-light);
+            min-height: 100vh;
+            color: var(--altifiber-dark);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            background: var(--altifiber-red);
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: inline-block;
+        }
+
+        .logo img {
+            height: 35px;
+            display: block;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--altifiber-dark);
+        }
+
+        .header p {
+            color: var(--gray-text);
+            font-size: 1rem;
+        }
+
+        .progress-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        .progress-step {
+            flex: 1;
+            height: 4px;
+            background: var(--gray-medium);
+            border-radius: 2px;
+            transition: background 0.3s ease;
+        }
+
+        .progress-step.active {
+            background: var(--altifiber-red);
+        }
+
+        .progress-step.completed {
+            background: var(--altifiber-red);
+        }
+
+        /* Speed Meter */
+        .speed-meter {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 20px 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .speed-meter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .speed-meter-label {
+            font-size: 0.85rem;
+            color: var(--gray-text);
+            font-weight: 500;
+        }
+
+        .speed-meter-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--altifiber-red);
+            transition: all 0.4s ease;
+        }
+
+        .speed-meter-track {
+            position: relative;
+            height: 10px;
+            background: var(--gray-light);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .speed-meter-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #ee4238 0%, #ff6b5b 50%, #ee4238 100%);
+            border-radius: 5px;
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            width: 15%;
+        }
+
+        .speed-meter-fill.tier-100 {
+            background: var(--altifiber-red);
+        }
+
+        .speed-meter-fill.tier-500 {
+            background: linear-gradient(90deg, #ee4238 0%, #ff6b5b 100%);
+        }
+
+        .speed-meter-fill.tier-1000 {
+            background: linear-gradient(90deg, #ee4238 0%, #ff8c7a 100%);
+        }
+
+        .speed-meter-markers {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .speed-marker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .speed-marker::before {
+            content: '';
+            width: 2px;
+            height: 8px;
+            background: var(--gray-medium);
+            margin-bottom: 5px;
+        }
+
+        .speed-marker span {
+            font-size: 0.75rem;
+            color: var(--gray-text);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .speed-marker.active span {
+            color: var(--altifiber-red);
+            font-weight: 700;
+        }
+
+        .speed-marker.active::before {
+            background: var(--altifiber-red);
+        }
+
+        /* Pulse animation when speed changes */
+        .speed-meter.pulse .speed-meter-value {
+            animation: pulse 0.4s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Tier change animation */
+        .speed-meter.tier-up {
+            animation: tierUp 0.6s ease;
+        }
+
+        @keyframes tierUp {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.02); box-shadow: 0 4px 20px rgba(238, 66, 56, 0.2); }
+            100% { transform: scale(1); }
+        }
+
+        .speed-meter.tier-down {
+            animation: tierDown 0.4s ease;
+        }
+
+        @keyframes tierDown {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.98); }
+            100% { transform: scale(1); }
+        }
+
+        /* Speed increase indicator */
+        .speed-change-indicator {
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            font-weight: 700;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .speed-change-indicator.show-up {
+            animation: slideUp 0.8s ease;
+            color: #48bb78;
+        }
+
+        .speed-change-indicator.show-down {
+            animation: slideDown 0.8s ease;
+            color: var(--altifiber-red);
+        }
+
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(0); }
+            30% { opacity: 1; transform: translateY(-10px); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(0); }
+            30% { opacity: 1; transform: translateY(10px); }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
+
+        /* Speed tier indicator */
+        .speed-tier-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 4px 12px;
+            border-radius: 12px;
+            margin-left: 10px;
+            vertical-align: middle;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .speed-tier-badge.tier-100 {
+            background: rgba(238, 66, 56, 0.1);
+            color: var(--altifiber-red);
+        }
+
+        .speed-tier-badge.tier-500 {
+            background: rgba(238, 66, 56, 0.15);
+            color: var(--altifiber-red);
+        }
+
+        .speed-tier-badge.tier-1000 {
+            background: var(--altifiber-red);
+            color: var(--white);
+        }
+
+        .question-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            display: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .question-card.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-card h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--altifiber-dark);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: var(--white);
+            border: 2px solid var(--gray-medium);
+            border-radius: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .option:hover {
+            border-color: var(--altifiber-red);
+            background: rgba(238, 66, 56, 0.03);
+        }
+
+        .option.selected {
+            border-color: var(--altifiber-red);
+            background: rgba(238, 66, 56, 0.05);
+        }
+
+        .option-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gray-light);
+            border-radius: 10px;
+        }
+
+        .option.selected .option-icon {
+            background: rgba(238, 66, 56, 0.1);
+        }
+
+        /* Multi-select checkbox indicator */
+        .options[data-multi="true"] .option {
+            position: relative;
+        }
+
+        .options[data-multi="true"] .option::after {
+            content: '';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--gray-medium);
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .options[data-multi="true"] .option:hover::after {
+            border-color: var(--altifiber-red);
+        }
+
+        .options[data-multi="true"] .option.selected::after {
+            background: var(--altifiber-red);
+            border-color: var(--altifiber-red);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z'/%3E%3C/svg%3E");
+            background-size: 16px;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .option-content h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+            color: var(--altifiber-dark);
+        }
+
+        .option-content p {
+            font-size: 0.85rem;
+            color: var(--gray-text);
+        }
+
+        .multi-select-hint {
+            font-size: 0.9rem;
+            color: var(--white);
+            background: var(--altifiber-red);
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: inline-block;
+            font-weight: 500;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-back {
+            background: transparent;
+            color: var(--gray-text);
+            border: 2px solid var(--gray-medium);
+        }
+
+        .btn-back:hover {
+            border-color: var(--altifiber-dark);
+            color: var(--altifiber-dark);
+        }
+
+        .btn-next {
+            background: var(--altifiber-red);
+            color: var(--white);
+        }
+
+        .btn-next:hover {
+            background: var(--altifiber-red-hover);
+        }
+
+        .btn-next:disabled {
+            background: var(--gray-medium);
+            color: var(--gray-text);
+            cursor: not-allowed;
+        }
+
+        /* Contact Form */
+        .contact-form {
+            margin-top: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--altifiber-dark);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--gray-medium);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            color: var(--altifiber-dark);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--altifiber-red);
+        }
+
+        .form-group input::placeholder {
+            color: #aaa;
+        }
+
+        .form-hint {
+            font-size: 0.8rem;
+            color: var(--gray-text);
+            margin-top: 6px;
+        }
+
+        .privacy-notice {
+            font-size: 0.8rem;
+            color: var(--gray-text);
+            margin-top: 15px;
+            line-height: 1.5;
+        }
+
+        .privacy-notice a {
+            color: var(--altifiber-red);
+            text-decoration: none;
+        }
+
+        /* Result Card */
+        .result-card {
+            display: none;
+            text-align: center;
+        }
+
+        .result-card.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .result-card.active .result-hero {
+            animation: slideDown 0.5s ease;
+        }
+
+        .result-card.active .result-reasons {
+            animation: slideUp 0.5s ease 0.2s both;
+        }
+
+        .result-card.active .result-features {
+            animation: slideUp 0.5s ease 0.35s both;
+        }
+
+        .result-card.active .result-cta {
+            animation: slideUp 0.5s ease 0.5s both;
+        }
+
+        .result-card.active .package-comparison {
+            animation: slideUp 0.5s ease 0.65s both;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-hero {
+            background: linear-gradient(135deg, var(--altifiber-red) 0%, #ff6b5b 100%);
+            border-radius: 20px;
+            padding: 40px 30px;
+            margin-bottom: 20px;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .result-hero-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 1.8rem;
+            animation: bounceIn 0.6s ease 0.3s both;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Confetti */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+        }
+
+        .confetti.active {
+            animation: confetti-fall 3s ease-out forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                opacity: 1;
+                transform: translateY(-100px) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+
+        .result-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: fadeIn 0.5s ease 0.2s both;
+        }
+
+        .result-package-name {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            animation: textReveal 0.6s ease 0.4s both;
+        }
+
+        @keyframes textReveal {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+                letter-spacing: 10px;
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                letter-spacing: normal;
+            }
+        }
+
+        .result-speed {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            animation: fadeIn 0.5s ease 0.6s both;
+        }
+
+        .result-features {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .result-features h3 {
+            font-size: 1rem;
+            margin-bottom: 20px;
+            color: var(--altifiber-dark);
+            font-weight: 600;
+        }
+
+        .result-features ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            text-align: left;
+        }
+
+        .result-features li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--altifiber-dark);
+            font-size: 0.9rem;
+            padding: 12px;
+            background: var(--gray-light);
+            border-radius: 10px;
+        }
+
+        .result-features li::before {
+            content: "✓";
+            color: var(--white);
+            background: var(--altifiber-red);
+            font-weight: 700;
+            font-size: 0.8rem;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 500px) {
+            .result-features ul {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .result-reasons {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: left;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--altifiber-red);
+        }
+
+        .result-reasons h3 {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            color: var(--altifiber-dark);
+            font-weight: 600;
+        }
+
+        .result-reasons ul {
+            list-style: none;
+        }
+
+        .result-reasons li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            color: var(--altifiber-dark);
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .result-reasons li:last-child {
+            border-bottom: none;
+        }
+
+        .result-reasons li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--altifiber-red);
+            font-weight: 700;
+        }
+
+        .result-cta {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            background: var(--altifiber-red);
+            color: var(--white);
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: block;
+        }
+
+        .btn-primary:hover {
+            background: var(--altifiber-red-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(238, 66, 56, 0.4);
+        }
+
+        .result-cta .btn-primary {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(238, 66, 56, 0.4); }
+            50% { box-shadow: 0 0 20px 5px rgba(238, 66, 56, 0.3); }
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--gray-text);
+            padding: 14px 28px;
+            border: 2px solid var(--gray-medium);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--altifiber-dark);
+            color: var(--altifiber-dark);
+        }
+
+        /* Package comparison */
+        .package-comparison {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .package-comparison h3 {
+            font-size: 1rem;
+            color: var(--altifiber-dark);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .packages {
+            display: flex;
+            gap: 10px;
+        }
+
+        .package {
+            flex: 1;
+            background: var(--gray-light);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .package:hover {
+            border-color: var(--gray-medium);
+        }
+
+        .package.recommended {
+            border-color: var(--altifiber-red);
+            background: rgba(238, 66, 56, 0.05);
+        }
+
+        .package-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--altifiber-dark);
+            margin-bottom: 4px;
+        }
+
+        .package-speed {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+            color: var(--gray-text);
+        }
+
+        .package-desc {
+            font-size: 0.7rem;
+            color: var(--gray-text);
+        }
+
+        .package.recommended {
+            border-color: var(--altifiber-red);
+            background: rgba(238, 66, 56, 0.05);
+            position: relative;
+        }
+
+        .package.recommended::before {
+            content: 'Anbefalt';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--altifiber-red);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 10px;
+            text-transform: uppercase;
+        }
+
+        .package.recommended .package-name {
+            color: var(--altifiber-red);
+        }
+    </style>
+</head>
+<body>
+    <div class="confetti-container" id="confetti-container"></div>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <img src="Altifiber_logo.png" alt="Altifiber">
+            </div>
+            <h1>Finn din perfekte fiberpakke</h1>
+            <p>Svar på noen raske spørsmål, så hjelper vi deg</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-step active" data-step="1"></div>
+            <div class="progress-step" data-step="2"></div>
+            <div class="progress-step" data-step="3"></div>
+            <div class="progress-step" data-step="4"></div>
+            <div class="progress-step" data-step="5"></div>
+        </div>
+
+        <!-- Hastighets-meter -->
+        <div class="speed-meter" id="speed-meter">
+            <div class="speed-meter-header">
+                <span class="speed-meter-label">Din anbefalte hastighet</span>
+                <span class="speed-meter-value" id="speed-value">
+                    100 Mbps
+                    <span class="speed-tier-badge tier-100" id="speed-badge">Medium</span>
+                </span>
+                <span class="speed-change-indicator" id="speed-change">↑</span>
+            </div>
+            <div class="speed-meter-track">
+                <div class="speed-meter-fill" id="speed-fill"></div>
+            </div>
+            <div class="speed-meter-markers">
+                <div class="speed-marker active" data-speed="100">
+                    <span>100</span>
+                </div>
+                <div class="speed-marker" data-speed="500">
+                    <span>500</span>
+                </div>
+                <div class="speed-marker" data-speed="1000">
+                    <span>1000</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spørsmål 1: Antall personer -->
+        <div class="question-card active" data-question="1">
+            <h2>Hvor mange bor i husstanden?</h2>
+            <div class="options">
+                <div class="option" data-value="1" data-points="1">
+                    <span class="option-icon">👤</span>
+                    <div class="option-content">
+                        <h3>Bare meg</h3>
+                        <p>Singel eller alene</p>
+                    </div>
+                </div>
+                <div class="option" data-value="2" data-points="1">
+                    <span class="option-icon">👥</span>
+                    <div class="option-content">
+                        <h3>2 personer</h3>
+                        <p>Par eller samboere</p>
+                    </div>
+                </div>
+                <div class="option" data-value="3-4" data-points="2">
+                    <span class="option-icon">👨‍👩‍👧</span>
+                    <div class="option-content">
+                        <h3>3-4 personer</h3>
+                        <p>Liten familie</p>
+                    </div>
+                </div>
+                <div class="option" data-value="5+" data-points="3">
+                    <span class="option-icon">👨‍👩‍👧‍👦</span>
+                    <div class="option-content">
+                        <h3>5 eller flere</h3>
+                        <p>Stor familie</p>
+                    </div>
+                </div>
+            </div>
+            <div class="navigation">
+                <div></div>
+                <button class="btn btn-next" disabled>Neste</button>
+            </div>
+        </div>
+
+        <!-- Spørsmål 2: Bruksmønster -->
+        <div class="question-card" data-question="2">
+            <h2>Hva bruker dere internett til?</h2>
+            <p class="multi-select-hint">Du kan velge flere alternativer</p>
+            <div class="options" data-multi="true">
+                <div class="option" data-value="streaming" data-points="1">
+                    <span class="option-icon">📺</span>
+                    <div class="option-content">
+                        <h3>Streaming</h3>
+                        <p>Netflix, HBO, YouTube, etc.</p>
+                    </div>
+                </div>
+                <div class="option" data-value="gaming" data-points="2">
+                    <span class="option-icon">🎮</span>
+                    <div class="option-content">
+                        <h3>Gaming</h3>
+                        <p>Online spill, nedlasting av spill</p>
+                    </div>
+                </div>
+                <div class="option" data-value="hjemmekontor" data-points="1">
+                    <span class="option-icon">💼</span>
+                    <div class="option-content">
+                        <h3>Hjemmekontor</h3>
+                        <p>Videomøter, fildeling, VPN</p>
+                    </div>
+                </div>
+                <div class="option" data-value="smarthus" data-points="1">
+                    <span class="option-icon">🏠</span>
+                    <div class="option-content">
+                        <h3>Smarthus</h3>
+                        <p>Mange tilkoblede enheter</p>
+                    </div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="btn btn-back">Tilbake</button>
+                <button class="btn btn-next" disabled>Neste</button>
+            </div>
+        </div>
+
+        <!-- Spørsmål 3: Streaming kvalitet -->
+        <div class="question-card" data-question="3">
+            <h2>Hvor viktig er det at alt flyter uten hakking?</h2>
+            <div class="options">
+                <div class="option" data-value="basic" data-points="0">
+                    <span class="option-icon">👌</span>
+                    <div class="option-content">
+                        <h3>Greit nok</h3>
+                        <p>Tåler litt venting innimellom</p>
+                    </div>
+                </div>
+                <div class="option" data-value="important" data-points="1">
+                    <span class="option-icon">👍</span>
+                    <div class="option-content">
+                        <h3>Ganske viktig</h3>
+                        <p>Vil helst unngå hakking og bufring</p>
+                    </div>
+                </div>
+                <div class="option" data-value="critical" data-points="2">
+                    <span class="option-icon">⚡</span>
+                    <div class="option-content">
+                        <h3>Veldig viktig</h3>
+                        <p>Alt må fungere perfekt, alltid</p>
+                    </div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="btn btn-back">Tilbake</button>
+                <button class="btn btn-next" disabled>Neste</button>
+            </div>
+        </div>
+
+        <!-- Spørsmål 4: Samtidige brukere -->
+        <div class="question-card" data-question="4">
+            <h2>Hvor ofte er flere på nett samtidig?</h2>
+            <div class="options">
+                <div class="option" data-value="rarely" data-points="0">
+                    <span class="option-icon">🌙</span>
+                    <div class="option-content">
+                        <h3>Sjelden</h3>
+                        <p>Stort sett én om gangen</p>
+                    </div>
+                </div>
+                <div class="option" data-value="sometimes" data-points="1">
+                    <span class="option-icon">☀️</span>
+                    <div class="option-content">
+                        <h3>Av og til</h3>
+                        <p>Noen ganger på kvelden</p>
+                    </div>
+                </div>
+                <div class="option" data-value="often" data-points="2">
+                    <span class="option-icon">🔥</span>
+                    <div class="option-content">
+                        <h3>Ofte</h3>
+                        <p>Flere aktive brukere daglig</p>
+                    </div>
+                </div>
+                <div class="option" data-value="always" data-points="3">
+                    <span class="option-icon">🚀</span>
+                    <div class="option-content">
+                        <h3>Hele tiden</h3>
+                        <p>Konstant høy aktivitet</p>
+                    </div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="btn btn-back">Tilbake</button>
+                <button class="btn btn-next">Neste</button>
+            </div>
+        </div>
+
+        <!-- Spørsmål 5: Kontaktinfo -->
+        <div class="question-card" data-question="5">
+            <h2>Nesten ferdig! Fortell oss litt om deg</h2>
+            <div class="contact-form">
+                <div class="form-group">
+                    <label for="navn">Navn</label>
+                    <input type="text" id="navn" placeholder="Ditt fulle navn">
+                </div>
+                <div class="form-group">
+                    <label for="epost">E-postadresse</label>
+                    <input type="email" id="epost" placeholder="din@epost.no">
+                    <p class="form-hint">Hit sender vi anbefalingen din</p>
+                </div>
+                <div class="form-group">
+                    <label for="postnummer">Postnummer</label>
+                    <input type="text" id="postnummer" placeholder="F.eks. 4515" maxlength="4" inputmode="numeric">
+                    <p class="form-hint">For å sjekke om vi kan levere fiber der du bor</p>
+                </div>
+                <p class="privacy-notice">
+                    Ved å fortsette godtar du at vi kontakter deg med informasjon om våre tjenester.
+                    <a href="#">Les vår personvernerklæring</a>
+                </p>
+            </div>
+            <div class="navigation">
+                <button class="btn btn-back">Tilbake</button>
+                <button class="btn btn-next" id="show-result-btn">Se min anbefaling</button>
+            </div>
+        </div>
+
+        <!-- Resultat -->
+        <div class="result-card" data-question="result">
+            <div class="result-hero">
+                <div class="result-hero-icon">🎉</div>
+                <div class="result-badge">Vår anbefaling til deg</div>
+                <div class="result-package-name" id="result-package-name">Altibox Standard</div>
+                <div class="result-speed" id="result-speed">500 Mbps</div>
+            </div>
+
+            <div class="result-reasons">
+                <h3>Derfor passer denne for deg:</h3>
+                <ul id="result-reasons-list">
+                    <!-- Fylles dynamisk -->
+                </ul>
+            </div>
+
+            <div class="result-features">
+                <h3>Dette får du:</h3>
+                <ul id="result-features-list">
+                    <!-- Fylles dynamisk -->
+                </ul>
+            </div>
+
+            <div class="result-cta">
+                <a href="https://portal.altifiber.no/bestill/?utm_source=facebook&utm_medium=cta&utm_campaign=priskalkulator" class="btn-primary" target="_blank">Se priser og få tilbud</a>
+                <button class="btn-secondary" onclick="restartQuiz()">Start på nytt</button>
+            </div>
+
+            <div class="package-comparison">
+                <h3><a href="https://www.altifiber.no/produkter-altifiber" target="_blank" style="color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">Se alle pakker <span style="font-size: 0.8em;">→</span></a></h3>
+                <div class="packages">
+                    <a href="https://www.altifiber.no/produkter-altifiber" target="_blank" class="package" data-package="100">
+                        <div class="package-name">Altibox Medium</div>
+                        <div class="package-speed">100 Mbps</div>
+                        <div class="package-desc">60 TV-poeng</div>
+                    </a>
+                    <a href="https://www.altifiber.no/produkter-altifiber" target="_blank" class="package" data-package="500">
+                        <div class="package-name">Altibox Standard</div>
+                        <div class="package-speed">500 Mbps</div>
+                        <div class="package-desc">60 TV-poeng</div>
+                    </a>
+                    <a href="https://www.altifiber.no/produkter-altifiber" target="_blank" class="package" data-package="1000">
+                        <div class="package-name">Altibox Extra</div>
+                        <div class="package-speed">1000 Mbps</div>
+                        <div class="package-desc">110 TV-poeng</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let currentQuestion = 1;
+        const totalQuestions = 5;
+        let answers = {};
+        let totalPoints = 0;
+        let livePoints = 0;
+        let currentTier = 100;
+
+        // Package definitions
+        const packages = {
+            100: {
+                name: 'Altibox Medium',
+                speed: '100 Mbps',
+                features: [
+                    'TV-pakke med 60 valgfrie poeng',
+                    'Internett 100 Mbps opp og ned',
+                    'Programarkiv og start forfra',
+                    '500 timer opptak',
+                    'Strømme og ta opp 4K-innhold'
+                ]
+            },
+            500: {
+                name: 'Altibox Standard',
+                speed: '500 Mbps',
+                features: [
+                    'TV-pakke med 60 valgfrie poeng',
+                    'Internett 500 Mbps opp og ned',
+                    'Programarkiv og start forfra',
+                    '500 timer opptak',
+                    'Strømme og ta opp 4K-innhold'
+                ]
+            },
+            1000: {
+                name: 'Altibox Extra',
+                speed: '1000 Mbps',
+                features: [
+                    'TV-pakke med 110 valgfrie poeng',
+                    'Internett 1000 Mbps opp og ned',
+                    'Programarkiv og start forfra',
+                    '500 timer opptak',
+                    'Strømme og ta opp 4K-innhold'
+                ]
+            }
+        };
+        let contactInfo = { navn: '', epost: '', postnummer: '' };
+
+        // Elements
+        const progressSteps = document.querySelectorAll('.progress-step');
+        const questionCards = document.querySelectorAll('.question-card');
+        const resultCard = document.querySelector('.result-card');
+        const speedMeter = document.getElementById('speed-meter');
+        const speedValue = document.getElementById('speed-value');
+        const speedFill = document.getElementById('speed-fill');
+        const speedBadge = document.getElementById('speed-badge');
+        const speedMarkers = document.querySelectorAll('.speed-marker');
+
+        // Initialize
+        function init() {
+            setupOptionListeners();
+            setupNavigationListeners();
+            setupContactFormListeners();
+            updateSpeedMeter(0);
+        }
+
+        function setupOptionListeners() {
+            document.querySelectorAll('.options').forEach(optionsContainer => {
+                const isMulti = optionsContainer.dataset.multi === 'true';
+
+                optionsContainer.querySelectorAll('.option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        if (isMulti) {
+                            option.classList.toggle('selected');
+                            updateNextButton();
+                        } else {
+                            optionsContainer.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+                            option.classList.add('selected');
+                            updateLiveSpeed();
+
+                            // Auto-advance after short delay for single-select questions
+                            setTimeout(() => {
+                                if (currentQuestion < totalQuestions) {
+                                    saveAnswer();
+                                    goToQuestion(currentQuestion + 1);
+                                }
+                            }, 300);
+                        }
+                        updateLiveSpeed();
+                    });
+                });
+            });
+        }
+
+        function setupContactFormListeners() {
+            const navnInput = document.getElementById('navn');
+            const epostInput = document.getElementById('epost');
+            const postnummerInput = document.getElementById('postnummer');
+            const showResultBtn = document.getElementById('show-result-btn');
+
+            function validateContactForm() {
+                const navn = navnInput.value.trim();
+                const epost = epostInput.value.trim();
+                const postnummer = postnummerInput.value.trim();
+
+                const navnValid = navn.length >= 2;
+                const epostValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(epost);
+                const postnummerValid = /^\d{4}$/.test(postnummer);
+
+                showResultBtn.disabled = !(navnValid && epostValid && postnummerValid);
+
+                contactInfo.navn = navn;
+                contactInfo.epost = epost;
+                contactInfo.postnummer = postnummer;
+            }
+
+            navnInput.addEventListener('input', validateContactForm);
+            epostInput.addEventListener('input', validateContactForm);
+            postnummerInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+                validateContactForm();
+            });
+        }
+
+        function updateLiveSpeed() {
+            let points = 0;
+            let hasGaming = false;
+            let isBigFamily = false;
+            let criticalPerformance = false;
+            let alwaysOnline = false;
+
+            document.querySelectorAll('.option.selected').forEach(option => {
+                points += parseInt(option.dataset.points) || 0;
+
+                if (option.dataset.value === 'gaming') hasGaming = true;
+                if (option.dataset.value === '5+') isBigFamily = true;
+                if (option.dataset.value === 'critical') criticalPerformance = true;
+                if (option.dataset.value === 'always') alwaysOnline = true;
+                if (option.dataset.value === '3-4') points = Math.max(points, 5);
+            });
+
+            if ((hasGaming && criticalPerformance) || (isBigFamily && alwaysOnline)) {
+                points = 12;
+            } else if (hasGaming) {
+                points = Math.max(points, 5);
+            }
+
+            livePoints = points;
+            updateSpeedMeter(points);
+        }
+
+        function updateSpeedMeter(points) {
+            let speed, tier, badge, fillPercent;
+
+            if (points <= 4) {
+                speed = 100;
+                tier = '100';
+                badge = 'Medium';
+                fillPercent = 15 + (points * 5);
+            } else if (points <= 8) {
+                speed = 500;
+                tier = '500';
+                badge = 'Standard';
+                fillPercent = 40 + ((points - 4) * 7);
+            } else {
+                speed = 1000;
+                tier = '1000';
+                badge = 'Extra';
+                fillPercent = 75 + Math.min((points - 8) * 5, 25);
+            }
+
+            const speedChange = document.getElementById('speed-change');
+            if (speed > currentTier) {
+                speedMeter.classList.remove('tier-down');
+                speedMeter.classList.add('tier-up');
+                speedChange.textContent = '↑';
+                speedChange.classList.remove('show-down');
+                speedChange.classList.add('show-up');
+                setTimeout(() => {
+                    speedMeter.classList.remove('tier-up');
+                    speedChange.classList.remove('show-up');
+                }, 600);
+            } else if (speed < currentTier) {
+                speedMeter.classList.remove('tier-up');
+                speedMeter.classList.add('tier-down');
+                speedChange.textContent = '↓';
+                speedChange.classList.remove('show-up');
+                speedChange.classList.add('show-down');
+                setTimeout(() => {
+                    speedMeter.classList.remove('tier-down');
+                    speedChange.classList.remove('show-down');
+                }, 400);
+            } else {
+                speedMeter.classList.add('pulse');
+                setTimeout(() => speedMeter.classList.remove('pulse'), 400);
+            }
+
+            currentTier = speed;
+
+            speedFill.style.width = fillPercent + '%';
+            speedFill.className = 'speed-meter-fill tier-' + tier;
+
+            speedValue.innerHTML = `${speed} Mbps <span class="speed-tier-badge tier-${tier}" id="speed-badge">${badge}</span>`;
+
+            speedMarkers.forEach(marker => {
+                const markerSpeed = parseInt(marker.dataset.speed);
+                if (markerSpeed <= speed) {
+                    marker.classList.add('active');
+                } else {
+                    marker.classList.remove('active');
+                }
+            });
+        }
+
+        function setupNavigationListeners() {
+            document.querySelectorAll('.btn-next').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (!btn.disabled) {
+                        if (currentQuestion < totalQuestions) {
+                            saveAnswer();
+                            goToQuestion(currentQuestion + 1);
+                        } else if (currentQuestion === totalQuestions) {
+                            showResult();
+                        }
+                    }
+                });
+            });
+
+            document.querySelectorAll('.btn-back').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (currentQuestion > 1) {
+                        goToQuestion(currentQuestion - 1);
+                    }
+                });
+            });
+        }
+
+        function updateNextButton() {
+            const currentCard = document.querySelector(`.question-card[data-question="${currentQuestion}"]`);
+            if (!currentCard) return;
+
+            const selectedOptions = currentCard.querySelectorAll('.option.selected');
+            const nextBtn = currentCard.querySelector('.btn-next');
+
+            if (nextBtn && currentQuestion < 5) {
+                nextBtn.disabled = selectedOptions.length === 0;
+            }
+        }
+
+        function saveAnswer() {
+            const currentCard = document.querySelector(`.question-card[data-question="${currentQuestion}"]`);
+            if (!currentCard) return;
+
+            const selectedOptions = currentCard.querySelectorAll('.option.selected');
+
+            let points = 0;
+            let values = [];
+
+            selectedOptions.forEach(option => {
+                points += parseInt(option.dataset.points) || 0;
+                values.push(option.dataset.value);
+            });
+
+            if (values.length > 0) {
+                answers[currentQuestion] = { values, points };
+                totalPoints += points;
+            }
+        }
+
+        function goToQuestion(questionNum) {
+            progressSteps.forEach((step, index) => {
+                if (index + 1 < questionNum) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (index + 1 === questionNum) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
+                }
+            });
+
+            questionCards.forEach(card => {
+                card.classList.remove('active');
+                if (parseInt(card.dataset.question) === questionNum) {
+                    card.classList.add('active');
+                }
+            });
+
+            currentQuestion = questionNum;
+        }
+
+        function showResult() {
+            questionCards.forEach(card => card.classList.remove('active'));
+            speedMeter.style.display = 'none';
+            resultCard.classList.add('active');
+
+            progressSteps.forEach(step => {
+                step.classList.remove('active');
+                step.classList.add('completed');
+            });
+
+            const recommendation = calculateRecommendation();
+            displayResult(recommendation);
+
+            // Trigger confetti!
+            launchConfetti();
+
+            // Log contact info (in production, send to backend)
+            console.log('Contact Info:', contactInfo);
+            console.log('Recommendation:', recommendation);
+        }
+
+        function launchConfetti() {
+            const container = document.getElementById('confetti-container');
+            const colors = ['#ee4238', '#ff6b5b', '#ffd700', '#48bb78', '#4299e1'];
+            const shapes = ['square', 'circle'];
+
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.borderRadius = shapes[Math.floor(Math.random() * shapes.length)] === 'circle' ? '50%' : '0';
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                container.appendChild(confetti);
+
+                setTimeout(() => confetti.classList.add('active'), 10);
+
+                // Remove after animation
+                setTimeout(() => confetti.remove(), 4000);
+            }
+        }
+
+        function calculateRecommendation() {
+            const hasGaming = answers[2]?.values?.includes('gaming');
+            const isBigFamily = answers[1]?.values?.includes('5+');
+            const alwaysOnline = answers[4]?.values?.includes('always');
+            const criticalPerformance = answers[3]?.values?.includes('critical');
+
+            let tier;
+
+            if ((hasGaming && criticalPerformance) || (isBigFamily && alwaysOnline)) {
+                tier = 1000;
+            } else if (hasGaming || answers[1]?.values?.includes('3-4') || totalPoints >= 5) {
+                tier = 500;
+            } else {
+                tier = 100;
+            }
+
+            const pkg = packages[tier];
+            return {
+                tier: tier,
+                name: pkg.name,
+                speed: pkg.speed,
+                features: pkg.features,
+                reasons: generateReasons(tier)
+            };
+        }
+
+        function generateReasons(tier) {
+            const reasons = [];
+            const personCount = answers[1]?.values?.[0];
+            const usage = answers[2]?.values || [];
+            const importance = answers[3]?.values?.[0];
+            const frequency = answers[4]?.values?.[0];
+
+            if (tier === 100) {
+                if (personCount === '1' || personCount === '2') {
+                    reasons.push('Perfekt dimensjonert for 1-2 personer');
+                }
+                reasons.push('Mer enn nok til streaming, surfing og hjemmekontor');
+                reasons.push('Symmetrisk hastighet gir jevn ytelse begge veier');
+                reasons.push('God pris for dine behov');
+            } else if (tier === 500) {
+                if (personCount === '3-4') {
+                    reasons.push('Ideell kapasitet for en familie');
+                }
+                if (usage.includes('gaming')) {
+                    reasons.push('Rask nedlasting av spilloppdateringer');
+                }
+                if (usage.includes('streaming')) {
+                    reasons.push('Flere kan strømme i 4K samtidig');
+                }
+                if (usage.includes('hjemmekontor')) {
+                    reasons.push('Stabil linje for videomøter og fildeling');
+                }
+                if (frequency === 'often') {
+                    reasons.push('Takler flere aktive brukere uten problemer');
+                }
+                if (reasons.length < 3) {
+                    reasons.push('Den gylne middelvei – god margin for fremtiden');
+                }
+            } else if (tier === 1000) {
+                reasons.push('Maksimal kapasitet – du slipper å tenke på begrensninger');
+                if (usage.includes('gaming')) {
+                    reasons.push('Lynrask nedlasting og minimal ping for gaming');
+                }
+                if (personCount === '5+') {
+                    reasons.push('Stor familie krever stor kapasitet');
+                }
+                if (frequency === 'always') {
+                    reasons.push('Konstant høy aktivitet krever høy båndbredde');
+                }
+                if (importance === 'critical') {
+                    reasons.push('Null kompromiss på ytelse – alltid full fart');
+                }
+                if (reasons.length < 4) {
+                    reasons.push('Fremtidssikret for årene som kommer');
+                }
+            }
+
+            return reasons.slice(0, 4);
+        }
+
+        function displayResult(recommendation) {
+            document.getElementById('result-package-name').textContent = recommendation.name;
+            document.getElementById('result-speed').textContent = recommendation.speed + ' opp og ned';
+
+            // Show features
+            const featuresList = document.getElementById('result-features-list');
+            featuresList.innerHTML = '';
+            recommendation.features.forEach(feature => {
+                const li = document.createElement('li');
+                li.textContent = feature;
+                featuresList.appendChild(li);
+            });
+
+            // Show reasons
+            const reasonsList = document.getElementById('result-reasons-list');
+            reasonsList.innerHTML = '';
+            recommendation.reasons.forEach(reason => {
+                const li = document.createElement('li');
+                li.textContent = reason;
+                reasonsList.appendChild(li);
+            });
+
+            document.querySelectorAll('.package').forEach(pkg => {
+                pkg.classList.remove('recommended');
+                if (parseInt(pkg.dataset.package) === recommendation.tier) {
+                    pkg.classList.add('recommended');
+                }
+            });
+        }
+
+        function restartQuiz() {
+            currentQuestion = 1;
+            answers = {};
+            totalPoints = 0;
+            livePoints = 0;
+            currentTier = 100;
+            contactInfo = { navn: '', epost: '', postnummer: '' };
+
+            document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+            document.querySelectorAll('.btn-next').forEach(b => b.disabled = true);
+            document.getElementById('navn').value = '';
+            document.getElementById('epost').value = '';
+            document.getElementById('postnummer').value = '';
+
+            speedMeter.style.display = 'block';
+            updateSpeedMeter(0);
+
+            resultCard.classList.remove('active');
+            goToQuestion(1);
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>
