@@ -1099,14 +1099,14 @@
                         <p>Par eller samboere</p>
                     </div>
                 </div>
-                <div class="option" data-value="3-4" data-points="2">
+                <div class="option" data-value="3-4" data-points="3">
                     <span class="option-icon">👨‍👩‍👧</span>
                     <div class="option-content">
                         <h3>3-4 personer</h3>
                         <p>Liten familie</p>
                     </div>
                 </div>
-                <div class="option" data-value="5+" data-points="3">
+                <div class="option" data-value="5+" data-points="5">
                     <span class="option-icon">👨‍👩‍👧‍👦</span>
                     <div class="option-content">
                         <h3>5 eller flere</h3>
@@ -1445,25 +1445,29 @@
 
         function updateLiveSpeed() {
             let points = 0;
+            let activityCount = 0;
             let hasGaming = false;
             let isBigFamily = false;
-            let criticalPerformance = false;
-            let alwaysOnline = false;
 
             document.querySelectorAll('.option.selected').forEach(option => {
-                points += parseInt(option.dataset.points) || 0;
+                const val = option.dataset.value;
+                const pts = parseInt(option.dataset.points) || 0;
 
-                if (option.dataset.value === 'gaming') hasGaming = true;
-                if (option.dataset.value === '5+') isBigFamily = true;
-                if (option.dataset.value === 'critical') criticalPerformance = true;
-                if (option.dataset.value === 'always') alwaysOnline = true;
-                if (option.dataset.value === '3-4') points = Math.max(points, 5);
+                points += pts;
+
+                if (val === 'gaming' || val === 'streaming' || val === 'hjemmekontor' || val === 'smarthus') {
+                    activityCount++;
+                }
+                if (val === 'gaming') hasGaming = true;
+                if (val === '5+') isBigFamily = true;
+                if (val === '3-4') points = Math.max(points, 6); // Base points for 3-4 people
             });
 
-            if ((hasGaming && criticalPerformance) || (isBigFamily && alwaysOnline)) {
-                points = 12;
-            } else if (hasGaming) {
-                points = Math.max(points, 5);
+            // Special logic: Big family with many activities always needs more
+            if (isBigFamily && activityCount >= 3) {
+                points = Math.max(points, 10);
+            } else if (hasGaming && activityCount >= 3) {
+                points = Math.max(points, 8);
             }
 
             livePoints = points;
@@ -1671,16 +1675,19 @@
         }
 
         function calculateRecommendation() {
-            const hasGaming = answers[2]?.values?.includes('gaming');
+            const usage = answers[2]?.values || [];
+            const activityCount = usage.length;
+            const hasGaming = usage.includes('gaming');
             const isBigFamily = answers[1]?.values?.includes('5+');
             const alwaysOnline = answers[4]?.values?.includes('always');
             const criticalPerformance = answers[3]?.values?.includes('critical');
 
             let tier;
 
-            if ((hasGaming && criticalPerformance) || (isBigFamily && alwaysOnline)) {
+            // Use the same logic as the live speedometer
+            if ((isBigFamily && activityCount >= 3) || (hasGaming && criticalPerformance) || (isBigFamily && alwaysOnline) || livePoints >= 9) {
                 tier = 1000;
-            } else if (hasGaming || answers[1]?.values?.includes('3-4') || totalPoints >= 5) {
+            } else if (hasGaming || activityCount >= 2 || answers[1]?.values?.includes('3-4') || livePoints >= 5) {
                 tier = 500;
             } else {
                 tier = 100;
