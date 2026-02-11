@@ -1,0 +1,47 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --altifiber-red: #ee4238;
+    --altifiber-red-hover: #d93a31;
+    --altifiber-dark: #302322;
+    --white: #ffffff;
+    --gray-light: #f5f5f5;
+    --gray-medium: #e0e0e0;
+    --gray-text: #666666;
+    --primary: var(--altifiber-red);
+}
+
+#hubspot-form-container {
+    display: none !important;
+}
+
+.gauge-needle {
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: 130px 130px;
+}
+
+.needle-path {
+    fill: var(--altifiber-dark);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--gray-medium);
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    color: var(--altifiber-dark);
+}
+
+.speedometer-module-wrapper {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--gray-light);
+    min-height: 100vh;
+    color: var(--altifiber-dark);
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "logo_image",
+    "name": "logo_image",
+    "label": "Logo bilde",
+    "required": false,
+    "locked": false,
+    "type": "image",
+    "default": {
+      "src": "https://21614920.fs1.hubspotusercontent-na1.net/hubfs/21614920/Altifiber_logo.png",
+      "alt": "Altifiber logo"
+    }
+  },
+  {
+    "id": "heading",
+    "name": "heading",
+    "label": "Overskrift",
+    "required": false,
+    "locked": false,
+    "type": "text",
+    "default": "Finn din perfekte fiberpakke"
+  },
+  {
+    "id": "privacy_policy_text",
+    "name": "privacy_policy_text",
+    "label": "Personvernerklæring tekst",
+    "required": false,
+    "locked": false,
+    "type": "text",
+    "default": "Ved å fortsette godtar du at vi sender deg et uforpliktende tilbud."
+  },
+  {
+    "id": "privacy_policy_link",
+    "name": "privacy_policy_link",
+    "label": "Personvernerklæring lenke",
+    "required": false,
+    "locked": false,
+    "type": "text",
+    "default": "#"
+  },
+  {
+    "id": "cta_text",
+    "name": "cta_text",
+    "label": "CTA knapp tekst",
+    "required": false,
+    "locked": false,
+    "type": "text",
+    "default": "Motta uforpliktende tilbud"
+  }
+]
