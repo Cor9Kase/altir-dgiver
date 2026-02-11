@@ -62,8 +62,7 @@ const packages = {
                 'Lynraskt internett for hele familien',
                 'Symmetrisk hastighet 500/500 Mbps',
                 'Takler mange samtidige brukere uten hakking',
-                'Ideelt for gaming og tung fildeling',
-                'Mulighet for å inkludere Netflix'
+                'Ideelt for gaming og tung fildeling'
             ]
         },
         1000: {
