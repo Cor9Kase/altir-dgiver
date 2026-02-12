@@ -1,8 +1,7 @@
 // State
 let currentQuestion = 0;
-const totalQuestions = 5;
+const totalQuestions = 6;
 let answers = {};
-let totalPoints = 0;
 let livePoints = 0;
 let currentTier = 100;
 
@@ -13,33 +12,31 @@ const packages = {
             name: 'Altibox Medium',
             speed: '100 Mbps',
             features: [
-                'TV-pakke med 60 valgfrie poeng',
-                'Inkluderer TV-boks med opptak og start forfra',
-                'Tilgang til Altibox-appen på alle skjermer',
-                'Symmetrisk fiberhastighet 100/100 Mbps',
-                'Stabil drift for surfing og streaming'
+                'TV-pakke med valgfritt innhold',
+                'TV-boks med opptak og start forfra',
+                'Altibox-appen på flere skjermer',
+                'Symmetrisk hastighet 100/100 Mbps',
+                'Stabil linje for vanlig bruk'
             ]
         },
         500: {
             name: 'Altibox Standard',
             speed: '500 Mbps',
             features: [
-                'Inkluderer Netflix-abonnement (Basic)',
-                'TV-pakke med 60 valgfrie poeng',
-                'Rikelig med kapasitet for en hel familie',
-                'Lynrask fiberhastighet 500/500 Mbps',
-                'Perfekt for 4K streaming og hjemmekontor'
+                'TV-pakke med valgfritt innhold',
+                'God kapasitet for flere brukere samtidig',
+                'Symmetrisk hastighet 500/500 Mbps',
+                'Passer godt til streaming og hjemmekontor'
             ]
         },
         1000: {
             name: 'Altibox Extra',
             speed: '1000 Mbps',
             features: [
-                'Inkluderer Netflix-abonnement (Standard)',
-                'TV-pakke med 110 valgfrie poeng',
-                'Markedets råeste fiberhastighet 1000/1000 Mbps',
-                'Ubegrenset kapasitet uansett antall brukere',
-                'Alltid maksimal ytelse og stabilitet'
+                'TV-pakke med utvidet innhold',
+                'Vår høyeste kapasitet for store husstander',
+                'Symmetrisk hastighet 1000/1000 Mbps',
+                'God margin ved høy samtidig bruk'
             ]
         }
     },
@@ -50,69 +47,158 @@ const packages = {
             features: [
                 'Rimelig og stabilt fiberbredbånd',
                 'Symmetrisk hastighet 100/100 Mbps',
-                'Perfekt for 1-2 personer og vanlig bruk',
-                'Garantert hastighet rett inn i veggen',
-                'Ingen datakvoter eller begrensninger'
+                'Passer for 1-2 personer med vanlig bruk',
+                'Ingen datakvoter'
             ]
         },
         500: {
             name: 'Fiber 500',
             speed: '500 Mbps',
             features: [
-                'Lynraskt internett for hele familien',
+                'Lynraskt internett for hele hjemmet',
                 'Symmetrisk hastighet 500/500 Mbps',
-                'Takler mange samtidige brukere uten hakking',
-                'Ideelt for gaming og tung fildeling'
+                'Takler flere samtidige brukere',
+                'Passer for streaming, gaming og hjemmekontor'
             ]
         },
         1000: {
             name: 'Fiber 1000',
             speed: '1000 Mbps',
             features: [
-                'Uovertruffen hastighet 1000/1000 Mbps',
-                'Inkluderer Netflix-abonnement',
-                'Eliminerer all venting ved nedlasting',
-                'Maksimal stabilitet for krevende bruk',
-                'Fremtidssikret for alle dine enheter'
+                'Maks kapasitet 1000/1000 Mbps',
+                'Laget for høy og jevn belastning',
+                'Kort ventetid på store nedlastinger',
+                'God margin for fremtidige behov'
             ]
         }
     }
 };
 
-let contactInfo = { navn: '', epost: '', postnummer: '', adresse: '' };
+let contactInfo = {
+    navn: '',
+    epost: '',
+    telefon: '',
+    postnummer: '',
+    adresse: ''
+};
 
 // Elements
 const progressSteps = document.querySelectorAll('.progress-step');
 const questionCards = document.querySelectorAll('.question-card');
 const resultCard = document.querySelector('.result-card');
 const speedometer = document.getElementById('speedometer');
-const speedValue = document.getElementById('speed-value');
 const speedNumber = document.getElementById('speed-number');
 const speedBadge = document.getElementById('speed-badge');
 const needle = document.getElementById('gauge-needle');
 const arcFill = document.getElementById('gauge-fill');
 const speedMarkers = document.querySelectorAll('.speedometer-marker');
 
+function getSurveyContext() {
+    return {
+        productType: document.querySelector('.question-card[data-question="0"] .option.selected')?.dataset.value || 'tv-internet',
+        persons: document.querySelector('.question-card[data-question="2"] .option.selected')?.dataset.value,
+        activities: Array.from(document.querySelectorAll('.question-card[data-question="3"] .option.selected')).map(o => o.dataset.value),
+        frequency: document.querySelector('.question-card[data-question="4"] .option.selected')?.dataset.value,
+        stability: document.querySelector('.question-card[data-question="5"] .option.selected')?.dataset.value
+    };
+}
+
+function scoreFromContext(ctx) {
+    let points = 0;
+
+    if (ctx.persons === '1') points += 1;
+    else if (ctx.persons === '2') points += 2;
+    else if (ctx.persons === '3-4') points += 4;
+    else if (ctx.persons === '5+') points += 5;
+
+    if (ctx.frequency === 'sometimes') points += 1;
+    if (ctx.frequency === 'often') points += 2;
+
+    if (ctx.activities.includes('streaming')) points += 2;
+    if (ctx.activities.includes('gaming')) points += 1;
+    if (ctx.activities.includes('hjemmekontor')) points += 1;
+    if (ctx.activities.includes('smarthus')) points += 1;
+    if (ctx.activities.includes('downloads')) points += 1;
+
+    if (ctx.stability === 'critical') points += 1;
+
+    return points;
+}
+
+function tierFromContext(ctx, points) {
+    let tier = 100;
+
+    if (points >= 10) tier = 1000;
+    else if (points >= 6) tier = 500;
+
+    const hasHighUsagePattern = ctx.activities.includes('streaming') && ctx.activities.includes('hjemmekontor') && ctx.activities.includes('gaming');
+
+    if (tier === 1000) {
+        const valid1000 = ctx.persons === '5+' || ctx.frequency === 'often' || hasHighUsagePattern;
+        if (!valid1000) tier = 500;
+    }
+
+    if (ctx.persons === '1' && !ctx.activities.includes('streaming') && ctx.frequency !== 'often') {
+        tier = Math.min(tier, 500);
+    }
+
+    return tier;
+}
+
+function tierMeta(speed) {
+    if (speed === 1000) return { tier: '1000', badge: 'Extra' };
+    if (speed === 500) return { tier: '500', badge: 'Standard' };
+    return { tier: '100', badge: 'Medium' };
+}
+
+function getCoverageStatus(address, zip) {
+    if (!address || !/^\d{4}$/.test(zip)) {
+        return { text: '', type: 'empty' };
+    }
+
+    const normalizedAddress = address.toLowerCase();
+
+    if (zip === '4380' && (normalizedAddress.includes('barstad') || normalizedAddress.includes('haua'))) {
+        return {
+            text: 'Vi kan levere i området, men ikke nødvendigvis på alle adresser her. Vi dobbeltsjekker og sender korrekt tilbud.',
+            type: 'partial'
+        };
+    }
+
+    if (zip.startsWith('43')) {
+        return {
+            text: 'Ser bra ut. Vi går videre med foreløpig anbefaling og bekrefter levering i tilbudet.',
+            type: 'good'
+        };
+    }
+
+    return {
+        text: 'Vi må sjekke tilgjengelighet manuelt for denne adressen før endelig tilbud.',
+        type: 'manual'
+    };
+}
+
 // HubSpot submission logic using Submissions API (v3)
 async function submitToHubSpot() {
-    const portalId = "143320734";
-    const formId = "16643d38-d1f1-42a8-a19c-cb881062d4a7";
+    const portalId = '143320734';
+    const formId = '16643d38-d1f1-42a8-a19c-cb881062d4a7';
     const endpoint = `https://api-eu1.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`;
 
-    // Get HubSpot tracking cookie
     const hubspotutk = document.cookie.match(/hubspotutk=([^;]+)/)?.[1];
-
-    // Determine product choice
     const productChoice = answers[0]?.values?.[0] === 'tv-internet' ? 'TV og Internett' : 'Kun Internett';
     const recommendation = calculateRecommendation();
 
     const data = {
         fields: [
-            { name: "firstname", value: contactInfo.navn },
-            { name: "email", value: contactInfo.epost },
-            { name: "zip", value: contactInfo.postnummer },
-            { name: "address", value: contactInfo.adresse },
-            { name: "message", value: `Forespørsel fra rådgiver: Ønsker ${productChoice}. Anbefaling: ${recommendation.name} (${recommendation.speed}).` }
+            { name: 'firstname', value: contactInfo.navn },
+            { name: 'email', value: contactInfo.epost },
+            { name: 'phone', value: contactInfo.telefon },
+            { name: 'zip', value: contactInfo.postnummer },
+            { name: 'address', value: contactInfo.adresse },
+            {
+                name: 'message',
+                value: `Forespørsel fra rådgiver: Ønsker ${productChoice}. Foreløpig anbefaling: ${recommendation.name} (${recommendation.speed}). Adresse: ${contactInfo.adresse}, ${contactInfo.postnummer}.`
+            }
         ],
         context: {
             hutk: hubspotutk,
@@ -122,18 +208,13 @@ async function submitToHubSpot() {
     };
 
     try {
-        console.log('Submitting to HubSpot API...');
         const response = await fetch(endpoint, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
-        if (response.ok) {
-            console.log('HubSpot submission successful');
-        } else {
+        if (!response.ok) {
             console.error('HubSpot submission failed');
         }
     } catch (error) {
@@ -145,8 +226,10 @@ async function submitToHubSpot() {
 function init() {
     setupOptionListeners();
     setupNavigationListeners();
+    setupCoverageFormListeners();
     setupContactFormListeners();
-    updateSpeedometer(0);
+    updateSpeedometer(0, 100);
+    goToQuestion(0);
 }
 
 function setupOptionListeners() {
@@ -163,12 +246,11 @@ function setupOptionListeners() {
                     option.classList.add('selected');
                     updateNextButton();
 
-                    // Auto-advance for single-select (except the very first and last questions for better UX)
-                    if (currentQuestion < 5) {
+                    if (currentQuestion < totalQuestions) {
                         setTimeout(() => {
                             saveAnswer();
                             goToQuestion(currentQuestion + 1);
-                        }, 400);
+                        }, 350);
                     }
                 }
                 updateLiveSpeed();
@@ -177,90 +259,74 @@ function setupOptionListeners() {
     });
 }
 
+function setupCoverageFormListeners() {
+    const addressInput = document.getElementById('coverage-address');
+    const zipInput = document.getElementById('coverage-zip');
+    const statusEl = document.getElementById('coverage-status');
+
+    function validateCoverageStep() {
+        const address = addressInput?.value.trim() || '';
+        const zip = zipInput?.value.trim() || '';
+
+        contactInfo.adresse = address;
+        contactInfo.postnummer = zip;
+
+        const nextBtn = document.getElementById('coverage-next-btn');
+        const valid = address.length >= 5 && /^\d{4}$/.test(zip);
+        if (nextBtn) nextBtn.disabled = !valid;
+
+        if (!statusEl) return;
+        const status = getCoverageStatus(address, zip);
+        statusEl.textContent = status.text;
+        statusEl.style.color = status.type === 'partial' ? '#b45309' : (status.type === 'good' ? '#15803d' : 'var(--gray-text)');
+    }
+
+    if (addressInput) addressInput.addEventListener('input', validateCoverageStep);
+    if (zipInput) zipInput.addEventListener('input', validateCoverageStep);
+}
+
 function setupContactFormListeners() {
-    const inputs = ['navn', 'epost', 'postnummer', 'adresse'];
     const showResultBtn = document.getElementById('show-result-btn');
+    const navnInput = document.getElementById('navn');
+    const epostInput = document.getElementById('epost');
+    const telefonInput = document.getElementById('telefon');
 
     function validateContactForm() {
-        const navn = document.getElementById('navn').value.trim();
-        const epost = document.getElementById('epost').value.trim();
-        const address = document.getElementById('adresse').value.trim();
-        const zip = document.getElementById('postnummer').value.trim();
+        const navn = navnInput?.value.trim() || '';
+        const epost = epostInput?.value.trim() || '';
+        const telefon = telefonInput?.value.trim() || '';
 
-        const isValid = navn.length >= 2 &&
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(epost) &&
-            address.length >= 5 &&
-            /^\d{4}$/.test(zip);
-
-        showResultBtn.disabled = !isValid;
+        const isValid = navn.length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(epost);
+        if (showResultBtn) showResultBtn.disabled = !isValid;
 
         contactInfo.navn = navn;
         contactInfo.epost = epost;
-        contactInfo.adresse = address;
-        contactInfo.postnummer = zip;
+        contactInfo.telefon = telefon;
     }
 
-    inputs.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('input', validateContactForm);
-    });
+    if (navnInput) navnInput.addEventListener('input', validateContactForm);
+    if (epostInput) epostInput.addEventListener('input', validateContactForm);
+    if (telefonInput) telefonInput.addEventListener('input', validateContactForm);
 }
 
 function updateLiveSpeed() {
-    let points = 0;
-
-    // Points logic
-    const persons = document.querySelector('.question-card[data-question="1"] .option.selected')?.dataset.value;
-    const activities = Array.from(document.querySelectorAll('.question-card[data-question="2"] .option.selected')).map(o => o.dataset.value);
-    const importance = document.querySelector('.question-card[data-question="3"] .option.selected')?.dataset.value;
-    const frequency = document.querySelector('.question-card[data-question="4"] .option.selected')?.dataset.value;
-
-    // People points
-    if (persons === '1') points += 1;
-    else if (persons === '2') points += 2;
-    else if (persons === '3-4') points += 4;
-    else if (persons === '5+') points += 6;
-
-    // Activity points
-    activities.forEach(acc => points += 1);
-
-    // Importance & Frequency
-    if (importance === 'important') points += 0.5;
-    if (importance === 'critical') points += 1; // Stability requested
-
-    if (frequency === 'sometimes') points += 1;
-    if (frequency === 'often') points += 2;
+    const ctx = getSurveyContext();
+    const points = scoreFromContext(ctx);
+    const speed = tierFromContext(ctx, points);
 
     livePoints = points;
-    updateSpeedometer(points);
+    updateSpeedometer(points, speed);
 }
 
-function updateSpeedometer(points) {
-    let speed, tier, badge, needleAngle;
+function updateSpeedometer(points, speed) {
+    let needleAngle;
 
-    // More conservative thresholds:
-    // < 7 points = 100 Mbps
-    // 7-10 points = 500 Mbps
-    // 11+ points = 1000 Mbps
-
-    if (points < 7) {
-        speed = 100;
-        tier = '100';
-        badge = 'Medium';
-        // -90 to -45 based on points (0-7)
-        needleAngle = -90 + (points * 6.4);
-    } else if (points < 11) {
-        speed = 500;
-        tier = '500';
-        badge = 'Standard';
-        // -45 to +45 based on points (7-11)
-        needleAngle = -45 + ((points - 7) * 22.5);
+    if (points <= 6) {
+        needleAngle = -90 + (points / 6) * 55;
+    } else if (points <= 10) {
+        needleAngle = -35 + ((points - 6) / 4) * 70;
     } else {
-        speed = 1000;
-        tier = '1000';
-        badge = 'Extra';
-        // +45 to +90 based on points (11-14)
-        needleAngle = 45 + Math.min((points - 11) * 15, 45);
+        needleAngle = 35 + Math.min(((points - 10) / 4) * 55, 55);
     }
 
     const speedometerEl = document.getElementById('speedometer');
@@ -276,11 +342,8 @@ function updateSpeedometer(points) {
 
     currentTier = speed;
 
-    // Update needle (ensuring it reaches the end for 1000)
-    // -90 is 100, 0 is 500, 90 is 1000
     if (needle) needle.style.transform = `rotate(${needleAngle}deg)`;
 
-    // Update arc fill
     if (arcFill) {
         const fillPercent = (needleAngle + 90) / 180;
         const dashOffset = 283 * (1 - fillPercent);
@@ -288,27 +351,29 @@ function updateSpeedometer(points) {
     }
 
     if (speedNumber) speedNumber.textContent = speed;
+
+    const meta = tierMeta(speed);
     if (speedBadge) {
-        speedBadge.textContent = badge === 'Standard' ? 'Standard' : (badge === 'Extra' ? 'Extra' : 'Medium');
-        speedBadge.className = 'speed-tier-badge tier-' + tier;
+        speedBadge.textContent = meta.badge;
+        speedBadge.className = 'speed-tier-badge tier-' + meta.tier;
     }
 
     speedMarkers.forEach(marker => {
-        const mSpeed = parseInt(marker.dataset.speed);
-        marker.classList.toggle('active', mSpeed <= speed);
+        const markerSpeed = parseInt(marker.dataset.speed, 10);
+        marker.classList.toggle('active', markerSpeed <= speed);
     });
 }
 
 function setupNavigationListeners() {
     document.querySelectorAll('.btn-next').forEach(btn => {
         btn.addEventListener('click', () => {
-            if (!btn.disabled) {
-                if (currentQuestion < totalQuestions) {
-                    saveAnswer();
-                    goToQuestion(currentQuestion + 1);
-                } else if (currentQuestion === totalQuestions) {
-                    showResult();
-                }
+            if (btn.disabled) return;
+
+            if (currentQuestion < totalQuestions) {
+                saveAnswer();
+                goToQuestion(currentQuestion + 1);
+            } else if (currentQuestion === totalQuestions) {
+                showResult();
             }
         });
     });
@@ -326,12 +391,25 @@ function updateNextButton() {
     const currentCard = document.querySelector(`.question-card[data-question="${currentQuestion}"]`);
     if (!currentCard) return;
 
-    const selectedOptions = currentCard.querySelectorAll('.option.selected');
     const nextBtn = currentCard.querySelector('.btn-next');
+    if (!nextBtn) return;
 
-    if (nextBtn) {
-        nextBtn.disabled = selectedOptions.length === 0;
+    if (currentQuestion === 1) {
+        const address = document.getElementById('coverage-address')?.value.trim() || '';
+        const zip = document.getElementById('coverage-zip')?.value.trim() || '';
+        nextBtn.disabled = !(address.length >= 5 && /^\d{4}$/.test(zip));
+        return;
     }
+
+    if (currentQuestion === 6) {
+        const navn = document.getElementById('navn')?.value.trim() || '';
+        const epost = document.getElementById('epost')?.value.trim() || '';
+        nextBtn.disabled = !(navn.length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(epost));
+        return;
+    }
+
+    const selectedOptions = currentCard.querySelectorAll('.option.selected');
+    nextBtn.disabled = selectedOptions.length === 0;
 }
 
 function saveAnswer() {
@@ -352,16 +430,15 @@ function goToQuestion(questionNum) {
     });
 
     questionCards.forEach(card => {
-        card.classList.toggle('active', parseInt(card.dataset.question) === questionNum);
+        card.classList.toggle('active', parseInt(card.dataset.question, 10) === questionNum);
     });
 
     currentQuestion = questionNum;
     updateNextButton();
     updateLiveSpeed();
 
-    // Hide speedometer if we are on the intro question
     if (speedometer) {
-        speedometer.style.display = questionNum === 0 ? 'none' : 'block';
+        speedometer.style.display = questionNum <= 1 ? 'none' : 'block';
     }
 }
 
@@ -386,57 +463,61 @@ function launchConfetti() {
     const container = document.getElementById('confetti-container');
     if (!container) return;
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 50; i += 1) {
         const confetti = document.createElement('div');
         confetti.className = 'confetti';
         confetti.style.left = Math.random() * 100 + '%';
         confetti.style.backgroundColor = ['#ee4238', '#ff6b5b', '#ffd700', '#4299e1'][Math.floor(Math.random() * 4)];
         confetti.style.animationDelay = Math.random() * 0.5 + 's';
-        confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+        confetti.style.animationDuration = 2 + Math.random() * 2 + 's';
         container.appendChild(confetti);
         setTimeout(() => confetti.remove(), 4000);
     }
 }
 
 function calculateRecommendation() {
-    const productType = answers[0]?.values?.[0] || 'tv-internet';
-    let tier;
+    const ctx = getSurveyContext();
+    const points = scoreFromContext(ctx);
+    const tier = tierFromContext(ctx, points);
+    const pkg = packages[ctx.productType][tier];
 
-    if (livePoints >= 11) tier = 1000;
-    else if (livePoints >= 7) tier = 500;
-    else tier = 100;
-
-    const pkg = packages[productType][tier];
     return {
-        tier: tier,
+        tier,
         name: pkg.name,
         speed: pkg.speed,
         features: pkg.features,
-        reasons: generateReasons(tier, productType)
+        reasons: generateReasons(tier, ctx, points)
     };
 }
 
-function generateReasons(tier, type) {
+function generateReasons(tier, ctx, points) {
     const reasons = [];
-    const persons = document.querySelector('.question-card[data-question="1"] .option.selected')?.dataset.value;
-    const activities = Array.from(document.querySelectorAll('.question-card[data-question="2"] .option.selected')).map(o => o.dataset.value);
 
     if (tier === 100) {
-        reasons.push('Perfekt for mindre husstander med vanlig bruk');
-        reasons.push('Rimelig og stabil fiberlinje');
-    } else if (tier === 500) {
-        if (persons === '3-4' || persons === '5+') reasons.push('Ideell kapasitet for flere brukere samtidig');
-        if (activities.includes('streaming')) reasons.push('Flere kan strømme 4K samtidig uten hakking');
-        if (activities.includes('gaming')) reasons.push('Garantert kapasitet selv når andre strømmer samtidig');
-    } else if (tier === 1000) {
-        reasons.push('Ubegrenset kapasitet for dine behov');
-        reasons.push('Vår aller raskeste linje - null kompromiss');
-        if (activities.includes('gaming')) reasons.push('Lynrask nedlasting av spill og maksimal stabilitet');
+        reasons.push('Foreløpig anbefaling for vanlig bruk og lav samtidig belastning.');
     }
 
-    if (type === 'tv-internet') {
-        reasons.push('Inkluderer full TV-pakke med stor fleksibilitet');
+    if (tier === 500) {
+        reasons.push('Foreløpig anbefaling for flere brukere og jevn hverdagstrafikk.');
+        if (ctx.activities.includes('streaming')) {
+            reasons.push('God kapasitet når flere strømmer samtidig.');
+        }
     }
+
+    if (tier === 1000) {
+        reasons.push('Foreløpig anbefaling ved høy samtidig bruk og stort kapasitetsbehov.');
+        reasons.push('Gir ekstra margin når mange enheter er aktive samtidig.');
+    }
+
+    if (ctx.stability === 'critical' && points < 10) {
+        reasons.push('Stabilitet påvirkes også av WiFi og tjenestene du bruker, ikke bare Mbps.');
+    }
+
+    if (ctx.productType === 'tv-internet') {
+        reasons.push('TV-innhold og tilgjengelige tillegg bekreftes i det endelige tilbudet.');
+    }
+
+    reasons.push('Endelig anbefaling bekreftes etter kontroll av adresse og dekning.');
 
     return reasons.slice(0, 4);
 }
@@ -447,19 +528,20 @@ function displayResult(recommendation) {
     const featuresList = document.getElementById('result-features-list');
     const reasonsList = document.getElementById('result-reasons-list');
 
-    if (pkgName) pkgName.textContent = recommendation.name;
+    if (pkgName) pkgName.textContent = `Foreløpig anbefaling: ${recommendation.name}`;
     if (pkgSpeed) pkgSpeed.textContent = recommendation.speed + ' opp og ned';
 
     if (featuresList) {
-        featuresList.innerHTML = recommendation.features.map(f => `<li>${f}</li>`).join('');
+        featuresList.innerHTML = recommendation.features.map(feature => `<li>${feature}</li>`).join('');
     }
+
     if (reasonsList) {
-        reasonsList.innerHTML = recommendation.reasons.map(r => `<li>${r}</li>`).join('');
+        reasonsList.innerHTML = recommendation.reasons.map(reason => `<li>${reason}</li>`).join('');
     }
 }
 
 function restartQuiz() {
-    location.reload(); // Simplest way to reset all state correctly
+    location.reload();
 }
 
 // Start
