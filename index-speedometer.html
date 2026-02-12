@@ -575,11 +575,10 @@
         <div class="container">
             <div class="header">
                 <div class="logo">
-                    <img src="https://21614920.fs1.hubspotusercontent-na1.net/hubfs/21614920/Altifiber_logo.png"
-                        alt="Altifiber">
+                    <img src="https://21614920.fs1.hubspotusercontent-na1.net/hubfs/21614920/Altifiber_logo.png" alt="Altifiber">
                 </div>
-                <h1>Finn din perfekte fiberpakke</h1>
-                <p>Svar på noen raske spørsmål, så sender vi deg et uforpliktende tilbud</p>
+                <h1>Finn riktig fiberpakke for din adresse</h1>
+                <p>Svar på noen raske spørsmål. Vi sjekker dekning og sender et uforpliktende tilbud.</p>
             </div>
 
             <div class="progress-bar">
@@ -589,12 +588,12 @@
                 <div class="progress-step" data-step="3"></div>
                 <div class="progress-step" data-step="4"></div>
                 <div class="progress-step" data-step="5"></div>
+                <div class="progress-step" data-step="6"></div>
             </div>
 
             <div class="speedometer" id="speedometer">
-                <span class="speedometer-label">Anbefalt pakke basert på dine svar</span>
+                <span class="speedometer-label">Foreløpig anbefalt hastighet</span>
                 <span class="speed-change-indicator" id="speed-change">↑</span>
-
                 <div class="speedometer-gauge">
                     <svg class="gauge-svg" viewBox="0 0 260 140">
                         <defs>
@@ -617,11 +616,10 @@
                         <span class="speedometer-marker" data-speed="1000">1000</span>
                     </div>
                 </div>
-
                 <div class="speedometer-value" id="speed-value">
                     <span id="speed-number">100</span>
                     <span class="speedometer-unit">Mbps</span>
-                    <span class="speed-tier-badge tier-100" id="speed-badge">Hobby</span>
+                    <span class="speed-tier-badge tier-100" id="speed-badge">Medium</span>
                 </div>
             </div>
 
@@ -649,13 +647,34 @@
             </div>
 
             <div class="question-card" data-question="1">
-                <h2>Hvor mange bor i husstanden?</h2>
+                <h2>Hvor ønsker du levering?</h2>
+                <p style="margin-bottom: 18px; font-size: 0.92rem; color: var(--gray-text);">Vi sjekker først om vi kan levere til adressen din.</p>
+                <div class="contact-form">
+                    <div class="form-group">
+                        <label for="coverage-address">Adresse</label>
+                        <input type="text" id="coverage-address" placeholder="F.eks. Storgata 1">
+                    </div>
+                    <div class="form-group">
+                        <label for="coverage-zip">Postnummer</label>
+                        <input type="text" id="coverage-zip" placeholder="4515" maxlength="4" inputmode="numeric">
+                    </div>
+                    <p id="coverage-status" style="margin-top: 6px; font-size: 0.88rem; color: var(--gray-text); min-height: 20px;"></p>
+                    <p style="margin-top: 4px; font-size: 0.82rem; color: var(--gray-text);">Tilgjengelige pakker kan variere på adressen.</p>
+                </div>
+                <div class="navigation">
+                    <button class="btn btn-back">Tilbake</button>
+                    <button class="btn btn-next" id="coverage-next-btn" disabled>Neste</button>
+                </div>
+            </div>
+
+            <div class="question-card" data-question="2">
+                <h2>Hvor mange bruker nettet hjemme?</h2>
                 <div class="options">
                     <div class="option" data-value="1" data-points="1">
                         <span class="option-icon">👤</span>
                         <div class="option-content">
-                            <h3>Bare meg</h3>
-                            <p>Singel eller alene</p>
+                            <h3>1 person</h3>
+                            <p>Bor alene</p>
                         </div>
                     </div>
                     <div class="option" data-value="2" data-points="2">
@@ -672,50 +691,11 @@
                             <p>Liten familie</p>
                         </div>
                     </div>
-                    <div class="option" data-value="5+" data-points="6">
+                    <div class="option" data-value="5+" data-points="5">
                         <span class="option-icon">👨‍👩‍👧‍👦</span>
                         <div class="option-content">
                             <h3>5 eller flere</h3>
-                            <p>Stor familie</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="navigation">
-                    <button class="btn btn-back">Tilbake</button>
-                    <button class="btn btn-next" disabled>Neste</button>
-                </div>
-            </div>
-
-            <div class="question-card" data-question="2">
-                <h2>Hva bruker dere internett til?</h2>
-                <p class="multi-select-hint">Velg alt som er relevant for dere</p>
-                <div class="options" data-multi="true">
-                    <div class="option" data-value="streaming" data-points="1">
-                        <span class="option-icon">🎬</span>
-                        <div class="option-content">
-                            <h3>Streaming</h3>
-                            <p>Netflix, YouTube, TV2 Play, etc.</p>
-                        </div>
-                    </div>
-                    <div class="option" data-value="gaming" data-points="1">
-                        <span class="option-icon">🎮</span>
-                        <div class="option-content">
-                            <h3>Gaming</h3>
-                            <p>For best mulig stabilitet og lav ping</p>
-                        </div>
-                    </div>
-                    <div class="option" data-value="hjemmekontor" data-points="1">
-                        <span class="option-icon">💼</span>
-                        <div class="option-content">
-                            <h3>Hjemmekontor</h3>
-                            <p>Videomøter og tunge filer</p>
-                        </div>
-                    </div>
-                    <div class="option" data-value="smarthus" data-points="1">
-                        <span class="option-icon">🏠</span>
-                        <div class="option-content">
-                            <h3>Smarthus</h3>
-                            <p>Mange enheter koblet på nett</p>
+                            <p>Stor husstand</p>
                         </div>
                     </div>
                 </div>
@@ -726,27 +706,42 @@
             </div>
 
             <div class="question-card" data-question="3">
-                <h2>Hvor viktig er det med en dønn stabil linje?</h2>
-                <div class="options">
-                    <div class="option" data-value="basic" data-points="0">
-                        <span class="option-icon">👌</span>
+                <h2>Hva bruker dere nettet til?</h2>
+                <p class="multi-select-hint">Velg alt som passer</p>
+                <div class="options" data-multi="true">
+                    <div class="option" data-value="streaming" data-points="2">
+                        <span class="option-icon">🎬</span>
                         <div class="option-content">
-                            <h3>Vanlig bruk</h3>
-                            <p>Tåler at det tar litt ekstra tid</p>
+                            <h3>Streaming</h3>
+                            <p>Film, serier og sport i HD/4K</p>
                         </div>
                     </div>
-                    <div class="option" data-value="important" data-points="1">
-                        <span class="option-icon">👍</span>
+                    <div class="option" data-value="gaming" data-points="1">
+                        <span class="option-icon">🎮</span>
                         <div class="option-content">
-                            <h3>Ganske viktig</h3>
-                            <p>Vil unngå hakking i viktige øyeblikk</p>
+                            <h3>Gaming</h3>
+                            <p>Onlinespill på PC, konsoll eller mobil</p>
                         </div>
                     </div>
-                    <div class="option" data-value="critical" data-points="1">
-                        <span class="option-icon">⚡</span>
+                    <div class="option" data-value="hjemmekontor" data-points="1">
+                        <span class="option-icon">💼</span>
                         <div class="option-content">
-                            <h3>Veldig viktig</h3>
-                            <p>Alt må flyte perfekt til enhver tid</p>
+                            <h3>Hjemmekontor</h3>
+                            <p>Videomøter, skytjenester og fildeling</p>
+                        </div>
+                    </div>
+                    <div class="option" data-value="smarthus" data-points="1">
+                        <span class="option-icon">🏠</span>
+                        <div class="option-content">
+                            <h3>Smarthus</h3>
+                            <p>Mange tilkoblede enheter i hjemmet</p>
+                        </div>
+                    </div>
+                    <div class="option" data-value="downloads" data-points="1">
+                        <span class="option-icon">⬇️</span>
+                        <div class="option-content">
+                            <h3>Store nedlastinger</h3>
+                            <p>Spill, backup og store filer</p>
                         </div>
                     </div>
                 </div>
@@ -757,27 +752,27 @@
             </div>
 
             <div class="question-card" data-question="4">
-                <h2>Er det ofte mange på nett samtidig?</h2>
+                <h2>Hvor ofte er flere på nett samtidig?</h2>
                 <div class="options">
                     <div class="option" data-value="rarely" data-points="0">
                         <span class="option-icon">🌙</span>
                         <div class="option-content">
                             <h3>Sjelden</h3>
-                            <p>Stort sett 1-2 enheter av gangen</p>
+                            <p>Stort sett én bruker om gangen</p>
                         </div>
                     </div>
                     <div class="option" data-value="sometimes" data-points="1">
                         <span class="option-icon">☀️</span>
                         <div class="option-content">
                             <h3>Av og til</h3>
-                            <p>Typisk på ettermiddager/kvelder</p>
+                            <p>Flere bruker nettet i perioder</p>
                         </div>
                     </div>
                     <div class="option" data-value="often" data-points="2">
                         <span class="option-icon">🔥</span>
                         <div class="option-content">
-                            <h3>Veldig ofte</h3>
-                            <p>Høy total belastning på linja</p>
+                            <h3>Ofte</h3>
+                            <p>Mange samtidige enheter og brukere</p>
                         </div>
                     </div>
                 </div>
@@ -788,16 +783,52 @@
             </div>
 
             <div class="question-card" data-question="5">
-                <h2>Få et uforpliktende tilbud</h2>
-                <div class="contact-form">
-                    <div class="form-group"><label>Navn</label><input type="text" id="navn" placeholder="Fullt navn">
-                    </div>
-                    <div class="form-group"><label>E-postadresse</label><input type="email" id="epost"
-                            placeholder="din@epost.no"></div>
-                    <div class="form-group" style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px;">
-                        <div><label>Gateadresse</label><input type="text" id="adresse" placeholder="Storgata 1"></div>
-                        <div><label>Postnr</label><input type="text" id="postnummer" placeholder="4515" maxlength="4">
+                <h2>Hvor viktig er stabil linje for deg?</h2>
+                <div class="options">
+                    <div class="option" data-value="basic" data-points="0">
+                        <span class="option-icon">👌</span>
+                        <div class="option-content">
+                            <h3>Vanlig viktig</h3>
+                            <p>Normal bruk i hverdagen</p>
                         </div>
+                    </div>
+                    <div class="option" data-value="important" data-points="0">
+                        <span class="option-icon">👍</span>
+                        <div class="option-content">
+                            <h3>Ganske viktig</h3>
+                            <p>Ønsker jevn og stabil opplevelse</p>
+                        </div>
+                    </div>
+                    <div class="option" data-value="critical" data-points="1">
+                        <span class="option-icon">⚡</span>
+                        <div class="option-content">
+                            <h3>Veldig viktig</h3>
+                            <p>Vil minimere avbrudd i møter og spilling</p>
+                        </div>
+                    </div>
+                </div>
+                <p style="margin-top: 12px; font-size: 0.86rem; color: var(--gray-text);">Tips: Opplevd hakking skyldes ofte WiFi eller tjenesten du bruker, ikke bare hastigheten.</p>
+                <div class="navigation">
+                    <button class="btn btn-back">Tilbake</button>
+                    <button class="btn btn-next" disabled>Neste</button>
+                </div>
+            </div>
+
+            <div class="question-card" data-question="6">
+                <h2>Få et uforpliktende tilbud</h2>
+                <p style="margin-bottom: 20px; font-size: 0.9rem; color: var(--gray-text);">Vi sender tilbud med anbefalt pakke for adressen din.</p>
+                <div class="contact-form">
+                    <div class="form-group">
+                        <label for="navn">Navn</label>
+                        <input type="text" id="navn" placeholder="Fullt navn">
+                    </div>
+                    <div class="form-group">
+                        <label for="epost">E-postadresse</label>
+                        <input type="email" id="epost" placeholder="din@epost.no">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefon">Telefon (valgfritt)</label>
+                        <input type="tel" id="telefon" placeholder="99 99 99 99">
                     </div>
                 </div>
                 <div class="navigation">
@@ -809,8 +840,9 @@
             <div class="result-card">
                 <div class="result-hero">
                     <div class="result-badge">Takk for din forespørsel!</div>
-                    <div class="result-package-name" id="result-package-name">Altibox Standard</div>
+                    <div class="result-package-name" id="result-package-name">Foreløpig anbefaling: Altibox Standard</div>
                     <div class="result-speed" id="result-speed">500 Mbps</div>
+                    <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.9;">Vi har mottatt dine ønsker og vil sende deg et uforpliktende tilbud på e-post så snart vi har bekreftet hva som er tilgjengelig på adressen.</p>
                 </div>
                 <div class="result-reasons">
                     <h3>Vår foreløpige anbefaling:</h3>
@@ -828,151 +860,304 @@
     </div>
 
     <script>
-        // JS from module.js
         let currentQuestion = 0;
-        const totalQuestions = 5;
+        const totalQuestions = 6;
         let answers = {};
         let livePoints = 0;
         let currentTier = 100;
-        let contactInfo = { navn: '', epost: '', postnummer: '', adresse: '' };
 
         const packages = {
             'tv-internet': {
-                100: { name: 'Altibox Medium', speed: '100 Mbps', features: ['TV-pakke med 60 valgfrie poeng', 'Inkluderer TV-boks med opptak', 'Symmetrisk fiberhastighet 100/100 Mbps'] },
-                500: { name: 'Altibox Standard', speed: '500 Mbps', features: ['Inkluderer Netflix-abonnement (Basic)', 'TV-pakke med 60 valgfrie poeng', 'Lynrask fiberhastighet 500/500 Mbps'] },
-                1000: { name: 'Altibox Extra', speed: '1000 Mbps', features: ['Inkluderer Netflix-abonnement (Standard)', 'TV-pakke med 110 valgfrie poeng', 'Markedets råeste fiberhastighet 1000/1000 Mbps'] }
+                100: { name: 'Altibox Medium', speed: '100 Mbps', features: ['TV-pakke med valgfritt innhold', 'TV-boks med opptak og start forfra', 'Altibox-appen på flere skjermer', 'Symmetrisk hastighet 100/100 Mbps', 'Stabil linje for vanlig bruk'] },
+                500: { name: 'Altibox Standard', speed: '500 Mbps', features: ['TV-pakke med valgfritt innhold', 'God kapasitet for flere brukere samtidig', 'Symmetrisk hastighet 500/500 Mbps', 'Passer godt til streaming og hjemmekontor'] },
+                1000: { name: 'Altibox Extra', speed: '1000 Mbps', features: ['TV-pakke med utvidet innhold', 'Vår høyeste kapasitet for store husstander', 'Symmetrisk hastighet 1000/1000 Mbps', 'God margin ved høy samtidig bruk'] }
             },
             'internet-only': {
-                100: { name: 'Fiber 100', speed: '100 Mbps', features: ['Rimelig og stabilt fiberbredbånd', 'Symmetrisk hastighet 100/100 Mbps', 'Perfekt for 1-2 personer'] },
-                500: { name: 'Fiber 500', speed: '500 Mbps', features: ['Lynraskt internett for hele familien', 'Symmetrisk hastighet 500/500 Mbps', 'Takler mange samtidige brukere uten hakking', 'Ideelt for gaming og tung fildeling'] },
-                1000: { name: 'Fiber 1000', speed: '1000 Mbps', features: ['Uovertruffen hastighet 1000/1000 Mbps', 'Inkluderer Netflix-abonnement', 'Maksimal stabilitet for krevende bruk'] }
+                100: { name: 'Fiber 100', speed: '100 Mbps', features: ['Rimelig og stabilt fiberbredbånd', 'Symmetrisk hastighet 100/100 Mbps', 'Passer for 1-2 personer med vanlig bruk', 'Ingen datakvoter'] },
+                500: { name: 'Fiber 500', speed: '500 Mbps', features: ['Lynraskt internett for hele hjemmet', 'Symmetrisk hastighet 500/500 Mbps', 'Takler flere samtidige brukere', 'Passer for streaming, gaming og hjemmekontor'] },
+                1000: { name: 'Fiber 1000', speed: '1000 Mbps', features: ['Maks kapasitet 1000/1000 Mbps', 'Laget for høy og jevn belastning', 'Kort ventetid på store nedlastinger', 'God margin for fremtidige behov'] }
             }
         };
 
+        let contactInfo = { navn: '', epost: '', telefon: '', postnummer: '', adresse: '' };
+
+        const progressSteps = document.querySelectorAll('.progress-step');
+        const questionCards = document.querySelectorAll('.question-card');
+        const resultCard = document.querySelector('.result-card');
+        const speedometer = document.getElementById('speedometer');
+        const speedNumber = document.getElementById('speed-number');
+        const speedBadge = document.getElementById('speed-badge');
+        const needle = document.getElementById('gauge-needle');
+        const arcFill = document.getElementById('gauge-fill');
+        const speedMarkers = document.querySelectorAll('.speedometer-marker');
+
+        function getSurveyContext() {
+            return {
+                productType: document.querySelector('.question-card[data-question="0"] .option.selected')?.dataset.value || 'tv-internet',
+                persons: document.querySelector('.question-card[data-question="2"] .option.selected')?.dataset.value,
+                activities: Array.from(document.querySelectorAll('.question-card[data-question="3"] .option.selected')).map(o => o.dataset.value),
+                frequency: document.querySelector('.question-card[data-question="4"] .option.selected')?.dataset.value,
+                stability: document.querySelector('.question-card[data-question="5"] .option.selected')?.dataset.value
+            };
+        }
+
+        function scoreFromContext(ctx) {
+            let points = 0;
+            if (ctx.persons === '1') points += 1;
+            else if (ctx.persons === '2') points += 2;
+            else if (ctx.persons === '3-4') points += 4;
+            else if (ctx.persons === '5+') points += 5;
+            if (ctx.frequency === 'sometimes') points += 1;
+            if (ctx.frequency === 'often') points += 2;
+            if (ctx.activities.includes('streaming')) points += 2;
+            if (ctx.activities.includes('gaming')) points += 1;
+            if (ctx.activities.includes('hjemmekontor')) points += 1;
+            if (ctx.activities.includes('smarthus')) points += 1;
+            if (ctx.activities.includes('downloads')) points += 1;
+            if (ctx.stability === 'critical') points += 1;
+            return points;
+        }
+
+        function tierFromContext(ctx, points) {
+            let tier = 100;
+            if (points >= 10) tier = 1000;
+            else if (points >= 6) tier = 500;
+            const hasHighUsagePattern = ctx.activities.includes('streaming') && ctx.activities.includes('hjemmekontor') && ctx.activities.includes('gaming');
+            if (tier === 1000) {
+                const valid1000 = ctx.persons === '5+' || ctx.frequency === 'often' || hasHighUsagePattern;
+                if (!valid1000) tier = 500;
+            }
+            if (ctx.persons === '1' && !ctx.activities.includes('streaming') && ctx.frequency !== 'often') {
+                tier = Math.min(tier, 500);
+            }
+            return tier;
+        }
+
+        function getCoverageStatus(address, zip) {
+            if (!address || !/^\d{4}$/.test(zip)) return { text: '', type: 'empty' };
+            const normalizedAddress = address.toLowerCase();
+            if (zip === '4380' && (normalizedAddress.includes('barstad') || normalizedAddress.includes('haua'))) {
+                return { text: 'Vi kan levere i området, men ikke nødvendigvis på alle adresser her. Vi dobbeltsjekker og sender korrekt tilbud.', type: 'partial' };
+            }
+            if (zip.startsWith('43')) {
+                return { text: 'Ser bra ut. Vi går videre med foreløpig anbefaling og bekrefter levering i tilbudet.', type: 'good' };
+            }
+            return { text: 'Vi må sjekke tilgjengelighet manuelt for denne adressen før endelig tilbud.', type: 'manual' };
+        }
+
         function setupOptionListeners() {
-            document.querySelectorAll('.option').forEach(option => {
-                option.addEventListener('click', () => {
-                    const container = option.closest('.options');
-                    const isMulti = container.dataset.multi === 'true';
-                    if (!isMulti) container.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-                    option.classList.toggle('selected');
-                    updateNextButton();
-                    updateLiveSpeed();
-                    if (!isMulti && currentQuestion < 5) {
-                        setTimeout(() => { saveAnswer(); goToQuestion(currentQuestion + 1); }, 400);
-                    }
+            document.querySelectorAll('.options').forEach(container => {
+                const isMulti = container.dataset.multi === 'true';
+                container.querySelectorAll('.option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        if (isMulti) {
+                            option.classList.toggle('selected');
+                        } else {
+                            container.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+                            option.classList.add('selected');
+                        }
+                        updateNextButton();
+                        updateLiveSpeed();
+                        if (!isMulti && currentQuestion < totalQuestions) {
+                            setTimeout(() => {
+                                saveAnswer();
+                                goToQuestion(currentQuestion + 1);
+                            }, 350);
+                        }
+                    });
                 });
             });
         }
 
-        function updateLiveSpeed() {
-            let points = 0;
-            const persons = document.querySelector('.question-card[data-question="1"] .option.selected')?.dataset.value;
-            const activities = Array.from(document.querySelectorAll('.question-card[data-question="2"] .option.selected')).map(o => o.dataset.value);
-            const importance = document.querySelector('.question-card[data-question="3"] .option.selected')?.dataset.value;
-            const frequency = document.querySelector('.question-card[data-question="4"] .option.selected')?.dataset.value;
-
-            if (persons === '1') points += 1;
-            else if (persons === '2') points += 2;
-            else if (persons === '3-4') points += 4;
-            else if (persons === '5+') points += 6;
-
-            activities.forEach(() => points += 1);
-            if (importance === 'important') points += 0.5;
-            if (importance === 'critical') points += 1;
-            if (frequency === 'sometimes') points += 1;
-            if (frequency === 'often') points += 2;
-
-            livePoints = points;
-            updateSpeedometer(points);
+        function setupCoverageFormListeners() {
+            const addressInput = document.getElementById('coverage-address');
+            const zipInput = document.getElementById('coverage-zip');
+            const statusEl = document.getElementById('coverage-status');
+            function validateCoverageStep() {
+                const address = addressInput?.value.trim() || '';
+                const zip = zipInput?.value.trim() || '';
+                contactInfo.adresse = address;
+                contactInfo.postnummer = zip;
+                const nextBtn = document.getElementById('coverage-next-btn');
+                const valid = address.length >= 5 && /^\d{4}$/.test(zip);
+                if (nextBtn) nextBtn.disabled = !valid;
+                if (!statusEl) return;
+                const status = getCoverageStatus(address, zip);
+                statusEl.textContent = status.text;
+                statusEl.style.color = status.type === 'partial' ? '#b45309' : (status.type === 'good' ? '#15803d' : 'var(--gray-text)');
+            }
+            if (addressInput) addressInput.addEventListener('input', validateCoverageStep);
+            if (zipInput) zipInput.addEventListener('input', validateCoverageStep);
         }
 
-        function updateSpeedometer(points) {
-            let speed, tier, badge, needleAngle;
-            if (points < 7) { speed = 100; tier = '100'; badge = 'Medium'; needleAngle = -90 + (points * 6.4); }
-            else if (points < 11) { speed = 500; tier = '500'; badge = 'Standard'; needleAngle = -45 + ((points - 7) * 22.5); }
-            else { speed = 1000; tier = '1000'; badge = 'Extra'; needleAngle = 45 + Math.min((points - 11) * 15, 45); }
+        function setupContactFormListeners() {
+            const showResultBtn = document.getElementById('show-result-btn');
+            const navnInput = document.getElementById('navn');
+            const epostInput = document.getElementById('epost');
+            const telefonInput = document.getElementById('telefon');
+            function validateContactForm() {
+                const navn = navnInput?.value.trim() || '';
+                const epost = epostInput?.value.trim() || '';
+                const telefon = telefonInput?.value.trim() || '';
+                const isValid = navn.length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(epost);
+                if (showResultBtn) showResultBtn.disabled = !isValid;
+                contactInfo.navn = navn;
+                contactInfo.epost = epost;
+                contactInfo.telefon = telefon;
+            }
+            if (navnInput) navnInput.addEventListener('input', validateContactForm);
+            if (epostInput) epostInput.addEventListener('input', validateContactForm);
+            if (telefonInput) telefonInput.addEventListener('input', validateContactForm);
+        }
 
-            document.getElementById('gauge-needle').style.transform = `rotate(${needleAngle}deg)`;
-            const dashOffset = 283 * (1 - (needleAngle + 90) / 180);
-            document.getElementById('gauge-fill').style.strokeDashoffset = dashOffset;
-            document.getElementById('speed-number').textContent = speed;
-            document.getElementById('speed-badge').textContent = badge;
-            document.querySelectorAll('.speedometer-marker').forEach(m => m.classList.toggle('active', parseInt(m.dataset.speed) <= speed));
+        function updateLiveSpeed() {
+            const ctx = getSurveyContext();
+            const points = scoreFromContext(ctx);
+            const speed = tierFromContext(ctx, points);
+            livePoints = points;
+            updateSpeedometer(points, speed);
+        }
+
+        function updateSpeedometer(points, speed) {
+            let needleAngle;
+            if (points <= 6) needleAngle = -90 + (points / 6) * 55;
+            else if (points <= 10) needleAngle = -35 + ((points - 6) / 4) * 70;
+            else needleAngle = 35 + Math.min(((points - 10) / 4) * 55, 55);
+
+            if (needle) needle.style.transform = `rotate(${needleAngle}deg)`;
+            if (arcFill) {
+                const fillPercent = (needleAngle + 90) / 180;
+                arcFill.style.strokeDashoffset = 283 * (1 - fillPercent);
+            }
+            if (speedNumber) speedNumber.textContent = speed;
+            if (speedBadge) {
+                const badge = speed === 1000 ? 'Extra' : (speed === 500 ? 'Standard' : 'Medium');
+                const tier = speed === 1000 ? '1000' : (speed === 500 ? '500' : '100');
+                speedBadge.textContent = badge;
+                speedBadge.className = 'speed-tier-badge tier-' + tier;
+            }
+            speedMarkers.forEach(marker => {
+                const markerSpeed = parseInt(marker.dataset.speed, 10);
+                marker.classList.toggle('active', markerSpeed <= speed);
+            });
             currentTier = speed;
         }
 
-        function goToQuestion(num) {
-            document.querySelectorAll('.question-card').forEach(c => c.classList.remove('active'));
-            document.querySelector(`.question-card[data-question="${num}"]`).classList.add('active');
-            document.querySelectorAll('.progress-step').forEach((s, i) => { s.classList.toggle('active', i === num); s.classList.toggle('completed', i < num); });
-            currentQuestion = num;
-            document.getElementById('speedometer').style.display = num === 0 ? 'none' : 'block';
-            updateNextButton();
+        function setupNavigationListeners() {
+            document.querySelectorAll('.btn-next').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (btn.disabled) return;
+                    if (currentQuestion < totalQuestions) {
+                        saveAnswer();
+                        goToQuestion(currentQuestion + 1);
+                    } else {
+                        showResult();
+                    }
+                });
+            });
+            document.querySelectorAll('.btn-back').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (currentQuestion > 0) goToQuestion(currentQuestion - 1);
+                });
+            });
         }
 
         function updateNextButton() {
             const currentCard = document.querySelector(`.question-card[data-question="${currentQuestion}"]`);
-            const btn = currentCard.querySelector('.btn-next');
-            if (btn) btn.disabled = currentCard.querySelectorAll('.option.selected').length === 0;
+            if (!currentCard) return;
+            const nextBtn = currentCard.querySelector('.btn-next');
+            if (!nextBtn) return;
+            if (currentQuestion === 1) {
+                const address = document.getElementById('coverage-address')?.value.trim() || '';
+                const zip = document.getElementById('coverage-zip')?.value.trim() || '';
+                nextBtn.disabled = !(address.length >= 5 && /^\d{4}$/.test(zip));
+                return;
+            }
+            if (currentQuestion === 6) {
+                const navn = document.getElementById('navn')?.value.trim() || '';
+                const epost = document.getElementById('epost')?.value.trim() || '';
+                nextBtn.disabled = !(navn.length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(epost));
+                return;
+            }
+            nextBtn.disabled = currentCard.querySelectorAll('.option.selected').length === 0;
         }
 
         function saveAnswer() {
-            const options = document.querySelector(`.question-card[data-question="${currentQuestion}"]`).querySelectorAll('.option.selected');
-            answers[currentQuestion] = { values: Array.from(options).map(o => o.dataset.value) };
+            const currentCard = document.querySelector(`.question-card[data-question="${currentQuestion}"]`);
+            if (!currentCard) return;
+            const selectedOptions = currentCard.querySelectorAll('.option.selected');
+            answers[currentQuestion] = { values: Array.from(selectedOptions).map(o => o.dataset.value) };
         }
 
-        document.querySelectorAll('.btn-next').forEach(btn => btn.addEventListener('click', () => {
-            if (currentQuestion < totalQuestions) { saveAnswer(); goToQuestion(currentQuestion + 1); }
-            else showResult();
-        }));
+        function goToQuestion(questionNum) {
+            progressSteps.forEach((step, index) => {
+                step.classList.toggle('completed', index < questionNum);
+                step.classList.toggle('active', index === questionNum);
+            });
+            questionCards.forEach(card => {
+                card.classList.toggle('active', parseInt(card.dataset.question, 10) === questionNum);
+            });
+            currentQuestion = questionNum;
+            updateNextButton();
+            updateLiveSpeed();
+            if (speedometer) speedometer.style.display = questionNum <= 1 ? 'none' : 'block';
+        }
 
-        document.querySelectorAll('.btn-back').forEach(btn => btn.addEventListener('click', () => { if (currentQuestion > 0) goToQuestion(currentQuestion - 1); }));
-
-        document.getElementById('navn').addEventListener('input', validateForm);
-        document.getElementById('epost').addEventListener('input', validateForm);
-        document.getElementById('adresse').addEventListener('input', validateForm);
-        document.getElementById('postnummer').addEventListener('input', validateForm);
-
-        function validateForm() {
-            const n = document.getElementById('navn').value.trim();
-            const e = document.getElementById('epost').value.trim();
-            const a = document.getElementById('adresse').value.trim();
-            const p = document.getElementById('postnummer').value.trim();
-            document.getElementById('show-result-btn').disabled = !(n.length > 1 && e.includes('@') && a.length > 4 && p.length === 4);
-            contactInfo = { navn: n, epost: e, adresse: a, postnummer: p };
+        function calculateRecommendation() {
+            const ctx = getSurveyContext();
+            const points = scoreFromContext(ctx);
+            const tier = tierFromContext(ctx, points);
+            const pkg = packages[ctx.productType][tier];
+            const reasons = [];
+            if (tier === 100) reasons.push('Foreløpig anbefaling for vanlig bruk og lav samtidig belastning.');
+            if (tier === 500) reasons.push('Foreløpig anbefaling for flere brukere og jevn hverdagstrafikk.');
+            if (tier === 1000) reasons.push('Foreløpig anbefaling ved høy samtidig bruk og stort kapasitetsbehov.');
+            if (ctx.stability === 'critical' && points < 10) reasons.push('Stabilitet påvirkes også av WiFi og tjenestene du bruker, ikke bare Mbps.');
+            if (ctx.productType === 'tv-internet') reasons.push('TV-innhold og tilgjengelige tillegg bekreftes i det endelige tilbudet.');
+            reasons.push('Endelig anbefaling bekreftes etter kontroll av adresse og dekning.');
+            return { ...pkg, reasons: reasons.slice(0, 4) };
         }
 
         function showResult() {
-            document.getElementById('speedometer').style.display = 'none';
-            document.querySelectorAll('.question-card').forEach(c => c.classList.remove('active'));
-            document.querySelector('.result-card').classList.add('active');
-            const type = answers[0].values[0];
-            const tier = livePoints >= 11 ? 1000 : (livePoints >= 7 ? 500 : 100);
-            const pkg = packages[type][tier];
-            document.getElementById('result-package-name').textContent = pkg.name;
-            document.getElementById('result-speed').textContent = pkg.speed + ' opp og ned';
-            document.getElementById('result-features-list').innerHTML = pkg.features.map(f => `<li>${f}</li>`).join('');
-
-            let reasons = ['Perfekt for ditt behov'];
-            if (tier >= 500) reasons.push('Høy kapasitet for mange enheter');
-            if (type === 'tv-internet') reasons.push('Inkluderer full TV-pakke');
-            document.getElementById('result-reasons-list').innerHTML = reasons.map(r => `<li>${r}</li>`).join('');
+            questionCards.forEach(card => card.classList.remove('active'));
+            if (speedometer) speedometer.style.display = 'none';
+            if (resultCard) resultCard.classList.add('active');
+            progressSteps.forEach(step => {
+                step.classList.remove('active');
+                step.classList.add('completed');
+            });
+            const recommendation = calculateRecommendation();
+            document.getElementById('result-package-name').textContent = `Foreløpig anbefaling: ${recommendation.name}`;
+            document.getElementById('result-speed').textContent = recommendation.speed + ' opp og ned';
+            document.getElementById('result-features-list').innerHTML = recommendation.features.map(f => `<li>${f}</li>`).join('');
+            document.getElementById('result-reasons-list').innerHTML = recommendation.reasons.map(r => `<li>${r}</li>`).join('');
 
             const container = document.getElementById('confetti-container');
             for (let i = 0; i < 50; i++) {
-                const c = document.createElement('div');
-                c.className = 'confetti';
-                c.style.left = Math.random() * 100 + '%';
-                c.style.backgroundColor = ['#ee4238', '#ffd700', '#4299e1'][Math.floor(Math.random() * 3)];
-                c.style.animationDuration = (2 + Math.random() * 2) + 's';
-                container.appendChild(c);
-                setTimeout(() => c.remove(), 4000);
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = ['#ee4238', '#ff6b5b', '#ffd700', '#4299e1'][Math.floor(Math.random() * 4)];
+                confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                container.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 4000);
             }
         }
 
-        function restartQuiz() { location.reload(); }
-        setupOptionListeners();
+        function restartQuiz() {
+            location.reload();
+        }
+
+        function init() {
+            setupOptionListeners();
+            setupNavigationListeners();
+            setupCoverageFormListeners();
+            setupContactFormListeners();
+            updateSpeedometer(0, 100);
+            goToQuestion(0);
+        }
+
+        init();
     </script>
 </body>
 
