@@ -47,6 +47,20 @@
             transition: all 0.2s ease;
             color: var(--altifiber-dark);
         }
+        .contact-form {
+            margin-top: 10px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--altifiber-dark);
+            line-height: 1.2;
+        }
 
         .speedometer-module-wrapper {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
@@ -591,7 +605,7 @@
             </div>
 
             <div class="speedometer" id="speedometer">
-                <span class="speedometer-label">Foreløpig anbefalt hastighet</span>
+                <span class="speedometer-label">Anbefalt hastighet</span>
                 <span class="speed-change-indicator" id="speed-change">↑</span>
                 <div class="speedometer-gauge">
                     <svg class="gauge-svg" viewBox="0 0 260 140">
@@ -721,24 +735,23 @@
                     <div class="form-group"><label for="navn">Navn</label><input type="text" id="navn" placeholder="Fullt navn"></div>
                     <div class="form-group"><label for="epost">E-postadresse</label><input type="email" id="epost" placeholder="din@epost.no"></div>
                     <div class="form-group"><label for="telefon">Telefon (valgfritt)</label><input type="tel" id="telefon" placeholder="99 99 99 99"></div>
-                    <div class="form-group"><label for="adresse">Adresse</label><input type="text" id="adresse" placeholder="F.eks. Storgata 1"></div>
                     <div class="form-group"><label for="postnummer">Postnummer</label><input type="text" id="postnummer" placeholder="4515" maxlength="4" inputmode="numeric"></div>
                     <p id="postnummer-status" style="margin-top: 4px; font-size: 0.84rem; color: var(--gray-text); min-height: 20px;"></p>
                 </div>
                 <div class="navigation">
                     <button class="btn btn-back">Tilbake</button>
-                    <button class="btn btn-next" id="show-result-btn" disabled>Send forespørsel</button>
+                    <button class="btn btn-next" id="show-result-btn" disabled>Bestill her</button>
                 </div>
             </div>
 
             <div class="result-card">
                 <div class="result-hero">
                     <div class="result-badge">Takk for din forespørsel!</div>
-                    <div class="result-package-name" id="result-package-name">Foreløpig anbefaling: Altibox Standard</div>
+                    <div class="result-package-name" id="result-package-name">Altibox Standard</div>
                     <div class="result-speed" id="result-speed">500 Mbps</div>
                     <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.9;">Vi har mottatt dine ønsker og sender et uforpliktende tilbud basert på valgt adresse og postnummer.</p>
                 </div>
-                <div class="result-reasons"><h3>Vår foreløpige anbefaling:</h3><ul id="result-reasons-list"></ul></div>
+                <div class="result-reasons"><h3>Vår anbefaling:</h3><ul id="result-reasons-list"></ul></div>
                 <div class="result-features"><h3>Hva dette innebærer:</h3><ul id="result-features-list"></ul></div>
                 <div class="result-cta"><button class="btn-primary" onclick="restartQuiz()">Start på nytt</button></div>
             </div>
@@ -834,8 +847,7 @@ let contactInfo = {
     navn: '',
     epost: '',
     telefon: '',
-    postnummer: '',
-    adresse: ''
+    postnummer: ''
 };
 
 const ALLOWED_ZIP_EXACT = new Set([
@@ -950,10 +962,9 @@ async function submitToHubSpot() {
             { name: 'email', value: contactInfo.epost },
             { name: 'phone', value: contactInfo.telefon },
             { name: 'zip', value: contactInfo.postnummer },
-            { name: 'address', value: contactInfo.adresse },
             {
                 name: 'message',
-                value: `Forespørsel fra rådgiver: Ønsker ${productChoice}. Foreløpig anbefaling: ${recommendation.name} (${recommendation.speed}). Adresse: ${contactInfo.adresse}, ${contactInfo.postnummer}.`
+                value: `Forespørsel fra rådgiver: Ønsker ${productChoice}. Anbefaling: ${recommendation.name} (${recommendation.speed}). Postnummer: ${contactInfo.postnummer}.`
             }
         ],
         context: {
@@ -1018,7 +1029,6 @@ function setupContactFormListeners() {
     const navnInput = document.getElementById('navn');
     const epostInput = document.getElementById('epost');
     const telefonInput = document.getElementById('telefon');
-    const adresseInput = document.getElementById('adresse');
     const postnummerInput = document.getElementById('postnummer');
     const postnummerStatus = document.getElementById('postnummer-status');
 
@@ -1026,7 +1036,6 @@ function setupContactFormListeners() {
         const navn = navnInput?.value.trim() || '';
         const epost = epostInput?.value.trim() || '';
         const telefon = telefonInput?.value.trim() || '';
-        const adresse = adresseInput?.value.trim() || '';
         const postnummer = postnummerInput?.value.trim() || '';
 
         const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(epost);
@@ -1046,20 +1055,18 @@ function setupContactFormListeners() {
             postnummerStatus.style.color = validZip ? '#15803d' : 'var(--gray-text)';
         }
 
-        const isValid = navn.length >= 2 && validEmail && adresse.length >= 5 && validZip;
+        const isValid = navn.length >= 2 && validEmail && validZip;
         if (showResultBtn) showResultBtn.disabled = !isValid;
 
         contactInfo.navn = navn;
         contactInfo.epost = epost;
         contactInfo.telefon = telefon;
-        contactInfo.adresse = adresse;
         contactInfo.postnummer = postnummer;
     }
 
     if (navnInput) navnInput.addEventListener('input', validateContactForm);
     if (epostInput) epostInput.addEventListener('input', validateContactForm);
     if (telefonInput) telefonInput.addEventListener('input', validateContactForm);
-    if (adresseInput) adresseInput.addEventListener('input', validateContactForm);
     if (postnummerInput) postnummerInput.addEventListener('input', validateContactForm);
 }
 
@@ -1151,9 +1158,8 @@ function updateNextButton() {
     if (currentQuestion === 5) {
         const navn = document.getElementById('navn')?.value.trim() || '';
         const epost = document.getElementById('epost')?.value.trim() || '';
-        const adresse = document.getElementById('adresse')?.value.trim() || '';
         const postnummer = document.getElementById('postnummer')?.value.trim() || '';
-        nextBtn.disabled = !(navn.length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(epost) && adresse.length >= 5 && isAllowedZip(postnummer));
+        nextBtn.disabled = !(navn.length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(epost) && isAllowedZip(postnummer));
         return;
     }
 
@@ -1243,18 +1249,18 @@ function generateReasons(tier, ctx, points) {
     const reasons = [];
 
     if (tier === 100) {
-        reasons.push('Foreløpig anbefaling for vanlig bruk og lav samtidig belastning.');
+        reasons.push('Anbefaling for vanlig bruk og lav samtidig belastning.');
     }
 
     if (tier === 500) {
-        reasons.push('Foreløpig anbefaling for flere brukere og jevn hverdagstrafikk.');
+        reasons.push('Anbefaling for flere brukere og jevn hverdagstrafikk.');
         if (ctx.activities.includes('streaming')) {
             reasons.push('God kapasitet når flere strømmer samtidig.');
         }
     }
 
     if (tier === 1000) {
-        reasons.push('Foreløpig anbefaling ved høy samtidig bruk og stort kapasitetsbehov.');
+        reasons.push('Anbefaling ved høy samtidig bruk og stort kapasitetsbehov.');
         reasons.push('Gir ekstra margin når mange enheter er aktive samtidig.');
     }
 
@@ -1277,7 +1283,7 @@ function displayResult(recommendation) {
     const featuresList = document.getElementById('result-features-list');
     const reasonsList = document.getElementById('result-reasons-list');
 
-    if (pkgName) pkgName.textContent = `Foreløpig anbefaling: ${recommendation.name}`;
+    if (pkgName) pkgName.textContent = recommendation.name;
     if (pkgSpeed) pkgSpeed.textContent = recommendation.speed + ' opp og ned';
 
     if (featuresList) {

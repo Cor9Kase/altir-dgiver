@@ -86,8 +86,7 @@ let contactInfo = {
     navn: '',
     epost: '',
     telefon: '',
-    postnummer: '',
-    adresse: ''
+    postnummer: ''
 };
 
 const ALLOWED_ZIP_EXACT = new Set([
@@ -202,10 +201,9 @@ async function submitToHubSpot() {
             { name: 'email', value: contactInfo.epost },
             { name: 'phone', value: contactInfo.telefon },
             { name: 'zip', value: contactInfo.postnummer },
-            { name: 'address', value: contactInfo.adresse },
             {
                 name: 'message',
-                value: `Forespørsel fra rådgiver: Ønsker ${productChoice}. Foreløpig anbefaling: ${recommendation.name} (${recommendation.speed}). Adresse: ${contactInfo.adresse}, ${contactInfo.postnummer}.`
+                value: `Forespørsel fra rådgiver: Ønsker ${productChoice}. Anbefaling: ${recommendation.name} (${recommendation.speed}). Postnummer: ${contactInfo.postnummer}.`
             }
         ],
         context: {
@@ -270,7 +268,6 @@ function setupContactFormListeners() {
     const navnInput = document.getElementById('navn');
     const epostInput = document.getElementById('epost');
     const telefonInput = document.getElementById('telefon');
-    const adresseInput = document.getElementById('adresse');
     const postnummerInput = document.getElementById('postnummer');
     const postnummerStatus = document.getElementById('postnummer-status');
 
@@ -278,7 +275,6 @@ function setupContactFormListeners() {
         const navn = navnInput?.value.trim() || '';
         const epost = epostInput?.value.trim() || '';
         const telefon = telefonInput?.value.trim() || '';
-        const adresse = adresseInput?.value.trim() || '';
         const postnummer = postnummerInput?.value.trim() || '';
 
         const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(epost);
@@ -298,20 +294,18 @@ function setupContactFormListeners() {
             postnummerStatus.style.color = validZip ? '#15803d' : 'var(--gray-text)';
         }
 
-        const isValid = navn.length >= 2 && validEmail && adresse.length >= 5 && validZip;
+        const isValid = navn.length >= 2 && validEmail && validZip;
         if (showResultBtn) showResultBtn.disabled = !isValid;
 
         contactInfo.navn = navn;
         contactInfo.epost = epost;
         contactInfo.telefon = telefon;
-        contactInfo.adresse = adresse;
         contactInfo.postnummer = postnummer;
     }
 
     if (navnInput) navnInput.addEventListener('input', validateContactForm);
     if (epostInput) epostInput.addEventListener('input', validateContactForm);
     if (telefonInput) telefonInput.addEventListener('input', validateContactForm);
-    if (adresseInput) adresseInput.addEventListener('input', validateContactForm);
     if (postnummerInput) postnummerInput.addEventListener('input', validateContactForm);
 }
 
@@ -403,9 +397,8 @@ function updateNextButton() {
     if (currentQuestion === 5) {
         const navn = document.getElementById('navn')?.value.trim() || '';
         const epost = document.getElementById('epost')?.value.trim() || '';
-        const adresse = document.getElementById('adresse')?.value.trim() || '';
         const postnummer = document.getElementById('postnummer')?.value.trim() || '';
-        nextBtn.disabled = !(navn.length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(epost) && adresse.length >= 5 && isAllowedZip(postnummer));
+        nextBtn.disabled = !(navn.length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(epost) && isAllowedZip(postnummer));
         return;
     }
 
@@ -495,18 +488,18 @@ function generateReasons(tier, ctx, points) {
     const reasons = [];
 
     if (tier === 100) {
-        reasons.push('Foreløpig anbefaling for vanlig bruk og lav samtidig belastning.');
+        reasons.push('Anbefaling for vanlig bruk og lav samtidig belastning.');
     }
 
     if (tier === 500) {
-        reasons.push('Foreløpig anbefaling for flere brukere og jevn hverdagstrafikk.');
+        reasons.push('Anbefaling for flere brukere og jevn hverdagstrafikk.');
         if (ctx.activities.includes('streaming')) {
             reasons.push('God kapasitet når flere strømmer samtidig.');
         }
     }
 
     if (tier === 1000) {
-        reasons.push('Foreløpig anbefaling ved høy samtidig bruk og stort kapasitetsbehov.');
+        reasons.push('Anbefaling ved høy samtidig bruk og stort kapasitetsbehov.');
         reasons.push('Gir ekstra margin når mange enheter er aktive samtidig.');
     }
 
@@ -529,7 +522,7 @@ function displayResult(recommendation) {
     const featuresList = document.getElementById('result-features-list');
     const reasonsList = document.getElementById('result-reasons-list');
 
-    if (pkgName) pkgName.textContent = `Foreløpig anbefaling: ${recommendation.name}`;
+    if (pkgName) pkgName.textContent = recommendation.name;
     if (pkgSpeed) pkgSpeed.textContent = recommendation.speed + ' opp og ned';
 
     if (featuresList) {
