@@ -1,6 +1,6 @@
 // State
 let currentQuestion = 0;
-const totalQuestions = 6;
+const totalQuestions = 5;
 let answers = {};
 let livePoints = 0;
 let currentTier = 100;
@@ -12,31 +12,39 @@ const packages = {
             name: 'Altibox Medium',
             speed: '100 Mbps',
             features: [
-                'TV-pakke med valgfritt innhold',
-                'TV-boks med opptak og start forfra',
-                'Altibox-appen på flere skjermer',
-                'Symmetrisk hastighet 100/100 Mbps',
-                'Stabil linje for vanlig bruk'
+                'TV-pakke med 60 valgfrie poeng',
+                'Internett 100 Mbps opp og ned',
+                'Programarkiv og start forfra',
+                '500 timer opptak',
+                'Strømme og ta opp 4K-innhold',
+                'Velg underholdningspakker som Netflix, Max, Viaplay, TV2 Play og SkyShowtime',
+                'Altibox-appen med søk, anbefalinger, film/serier og se offline'
             ]
         },
         500: {
             name: 'Altibox Standard',
             speed: '500 Mbps',
             features: [
-                'TV-pakke med valgfritt innhold',
-                'God kapasitet for flere brukere samtidig',
-                'Symmetrisk hastighet 500/500 Mbps',
-                'Passer godt til streaming og hjemmekontor'
+                'TV-pakke med 60 valgfrie poeng',
+                'Internett 500 Mbps opp og ned',
+                'Programarkiv og start forfra',
+                '500 timer opptak',
+                'Strømme og ta opp 4K-innhold',
+                'Velg underholdningspakker som Netflix, Max, Viaplay, TV2 Play og SkyShowtime',
+                'Altibox-appen med søk, anbefalinger, film/serier og se offline'
             ]
         },
         1000: {
             name: 'Altibox Extra',
             speed: '1000 Mbps',
             features: [
-                'TV-pakke med utvidet innhold',
-                'Vår høyeste kapasitet for store husstander',
-                'Symmetrisk hastighet 1000/1000 Mbps',
-                'God margin ved høy samtidig bruk'
+                'TV-pakke med 110 valgfrie poeng',
+                'Internett 1000 Mbps opp og ned',
+                'Programarkiv og start forfra',
+                '500 timer opptak',
+                'Strømme og ta opp 4K-innhold',
+                'Velg underholdningspakker som Netflix, Max, Viaplay, TV2 Play og SkyShowtime',
+                'Altibox-appen med søk, anbefalinger, film/serier og se offline'
             ]
         }
     },
@@ -82,6 +90,34 @@ let contactInfo = {
     adresse: ''
 };
 
+const ALLOWED_ZIP_EXACT = new Set([
+    '4420', '4460', '4462', '4463', '4465',
+    '4580', '4733', '4734', '4735', '4737',
+    '4741', '4742', '4744', '4745', '4746', '4747', '4748', '4749',
+    '4754', '4755', '4756',
+    '4380', '4381',
+    '4378', '4379'
+]);
+
+function inRange(zip, min, max) {
+    const num = Number(zip);
+    return Number.isInteger(num) && num >= min && num <= max;
+}
+
+function isAllowedZip(zip) {
+    if (!/^\d{4}$/.test(zip)) return false;
+    if (ALLOWED_ZIP_EXACT.has(zip)) return true;
+
+    return (
+        inRange(zip, 4604, 4639) ||
+        inRange(zip, 4513, 4519) ||
+        inRange(zip, 4400, 4438) ||
+        inRange(zip, 4550, 4563) ||
+        inRange(zip, 4700, 4707) ||
+        inRange(zip, 4370, 4376)
+    );
+}
+
 // Elements
 const progressSteps = document.querySelectorAll('.progress-step');
 const questionCards = document.querySelectorAll('.question-card');
@@ -96,10 +132,10 @@ const speedMarkers = document.querySelectorAll('.speedometer-marker');
 function getSurveyContext() {
     return {
         productType: document.querySelector('.question-card[data-question="0"] .option.selected')?.dataset.value || 'tv-internet',
-        persons: document.querySelector('.question-card[data-question="2"] .option.selected')?.dataset.value,
-        activities: Array.from(document.querySelectorAll('.question-card[data-question="3"] .option.selected')).map(o => o.dataset.value),
-        frequency: document.querySelector('.question-card[data-question="4"] .option.selected')?.dataset.value,
-        stability: document.querySelector('.question-card[data-question="5"] .option.selected')?.dataset.value
+        persons: document.querySelector('.question-card[data-question="1"] .option.selected')?.dataset.value,
+        activities: Array.from(document.querySelectorAll('.question-card[data-question="2"] .option.selected')).map(o => o.dataset.value),
+        frequency: document.querySelector('.question-card[data-question="3"] .option.selected')?.dataset.value,
+        stability: document.querySelector('.question-card[data-question="4"] .option.selected')?.dataset.value
     };
 }
 
@@ -151,34 +187,6 @@ function tierMeta(speed) {
     return { tier: '100', badge: 'Medium' };
 }
 
-function getCoverageStatus(address, zip) {
-    if (!address || !/^\d{4}$/.test(zip)) {
-        return { text: '', type: 'empty' };
-    }
-
-    const normalizedAddress = address.toLowerCase();
-
-    if (zip === '4380' && (normalizedAddress.includes('barstad') || normalizedAddress.includes('haua'))) {
-        return {
-            text: 'Vi kan levere i området, men ikke nødvendigvis på alle adresser her. Vi dobbeltsjekker og sender korrekt tilbud.',
-            type: 'partial'
-        };
-    }
-
-    if (zip.startsWith('43')) {
-        return {
-            text: 'Ser bra ut. Vi går videre med foreløpig anbefaling og bekrefter levering i tilbudet.',
-            type: 'good'
-        };
-    }
-
-    return {
-        text: 'Vi må sjekke tilgjengelighet manuelt for denne adressen før endelig tilbud.',
-        type: 'manual'
-    };
-}
-
-// HubSpot submission logic using Submissions API (v3)
 async function submitToHubSpot() {
     const portalId = '143320734';
     const formId = '16643d38-d1f1-42a8-a19c-cb881062d4a7';
@@ -222,11 +230,9 @@ async function submitToHubSpot() {
     }
 }
 
-// Initialize
 function init() {
     setupOptionListeners();
     setupNavigationListeners();
-    setupCoverageFormListeners();
     setupContactFormListeners();
     updateSpeedometer(0, 100);
     goToQuestion(0);
@@ -259,54 +265,54 @@ function setupOptionListeners() {
     });
 }
 
-function setupCoverageFormListeners() {
-    const addressInput = document.getElementById('coverage-address');
-    const zipInput = document.getElementById('coverage-zip');
-    const statusEl = document.getElementById('coverage-status');
-
-    function validateCoverageStep() {
-        const address = addressInput?.value.trim() || '';
-        const zip = zipInput?.value.trim() || '';
-
-        contactInfo.adresse = address;
-        contactInfo.postnummer = zip;
-
-        const nextBtn = document.getElementById('coverage-next-btn');
-        const valid = address.length >= 5 && /^\d{4}$/.test(zip);
-        if (nextBtn) nextBtn.disabled = !valid;
-
-        if (!statusEl) return;
-        const status = getCoverageStatus(address, zip);
-        statusEl.textContent = status.text;
-        statusEl.style.color = status.type === 'partial' ? '#b45309' : (status.type === 'good' ? '#15803d' : 'var(--gray-text)');
-    }
-
-    if (addressInput) addressInput.addEventListener('input', validateCoverageStep);
-    if (zipInput) zipInput.addEventListener('input', validateCoverageStep);
-}
-
 function setupContactFormListeners() {
     const showResultBtn = document.getElementById('show-result-btn');
     const navnInput = document.getElementById('navn');
     const epostInput = document.getElementById('epost');
     const telefonInput = document.getElementById('telefon');
+    const adresseInput = document.getElementById('adresse');
+    const postnummerInput = document.getElementById('postnummer');
+    const postnummerStatus = document.getElementById('postnummer-status');
 
     function validateContactForm() {
         const navn = navnInput?.value.trim() || '';
         const epost = epostInput?.value.trim() || '';
         const telefon = telefonInput?.value.trim() || '';
+        const adresse = adresseInput?.value.trim() || '';
+        const postnummer = postnummerInput?.value.trim() || '';
 
-        const isValid = navn.length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(epost);
+        const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(epost);
+        const validZipFormat = /^\d{4}$/.test(postnummer);
+        const validZip = isAllowedZip(postnummer);
+
+        if (postnummerStatus) {
+            if (!postnummer) {
+                postnummerStatus.textContent = '';
+            } else if (!validZipFormat) {
+                postnummerStatus.textContent = 'Postnummer må være 4 siffer.';
+            } else if (!validZip) {
+                postnummerStatus.textContent = 'Postnummeret er utenfor Altifiber sitt leveringsområde.';
+            } else {
+                postnummerStatus.textContent = 'Postnummer er innenfor godkjent område.';
+            }
+            postnummerStatus.style.color = validZip ? '#15803d' : 'var(--gray-text)';
+        }
+
+        const isValid = navn.length >= 2 && validEmail && adresse.length >= 5 && validZip;
         if (showResultBtn) showResultBtn.disabled = !isValid;
 
         contactInfo.navn = navn;
         contactInfo.epost = epost;
         contactInfo.telefon = telefon;
+        contactInfo.adresse = adresse;
+        contactInfo.postnummer = postnummer;
     }
 
     if (navnInput) navnInput.addEventListener('input', validateContactForm);
     if (epostInput) epostInput.addEventListener('input', validateContactForm);
     if (telefonInput) telefonInput.addEventListener('input', validateContactForm);
+    if (adresseInput) adresseInput.addEventListener('input', validateContactForm);
+    if (postnummerInput) postnummerInput.addEventListener('input', validateContactForm);
 }
 
 function updateLiveSpeed() {
@@ -394,17 +400,12 @@ function updateNextButton() {
     const nextBtn = currentCard.querySelector('.btn-next');
     if (!nextBtn) return;
 
-    if (currentQuestion === 1) {
-        const address = document.getElementById('coverage-address')?.value.trim() || '';
-        const zip = document.getElementById('coverage-zip')?.value.trim() || '';
-        nextBtn.disabled = !(address.length >= 5 && /^\d{4}$/.test(zip));
-        return;
-    }
-
-    if (currentQuestion === 6) {
+    if (currentQuestion === 5) {
         const navn = document.getElementById('navn')?.value.trim() || '';
         const epost = document.getElementById('epost')?.value.trim() || '';
-        nextBtn.disabled = !(navn.length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(epost));
+        const adresse = document.getElementById('adresse')?.value.trim() || '';
+        const postnummer = document.getElementById('postnummer')?.value.trim() || '';
+        nextBtn.disabled = !(navn.length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(epost) && adresse.length >= 5 && isAllowedZip(postnummer));
         return;
     }
 
@@ -438,7 +439,7 @@ function goToQuestion(questionNum) {
     updateLiveSpeed();
 
     if (speedometer) {
-        speedometer.style.display = questionNum <= 1 ? 'none' : 'block';
+        speedometer.style.display = questionNum === 0 ? 'none' : 'block';
     }
 }
 
@@ -517,7 +518,7 @@ function generateReasons(tier, ctx, points) {
         reasons.push('TV-innhold og tilgjengelige tillegg bekreftes i det endelige tilbudet.');
     }
 
-    reasons.push('Endelig anbefaling bekreftes etter kontroll av adresse og dekning.');
+    reasons.push('Endelig anbefaling bekreftes etter kontroll av adresse og postnummer.');
 
     return reasons.slice(0, 4);
 }

@@ -22,7 +22,6 @@
             <div class="progress-step" data-step="3"></div>
             <div class="progress-step" data-step="4"></div>
             <div class="progress-step" data-step="5"></div>
-            <div class="progress-step" data-step="6"></div>
         </div>
 
         <!-- Speedometer -->
@@ -89,30 +88,8 @@
             </div>
         </div>
 
-        <!-- Spørsmål 1: Dekningssjekk -->
+        <!-- Spørsmål 1: Antall personer -->
         <div class="question-card" data-question="1">
-            <h2>Hvor ønsker du levering?</h2>
-            <p style="margin-bottom: 18px; font-size: 0.92rem; color: var(--gray-text);">Vi sjekker først om vi kan levere til adressen din.</p>
-            <div class="contact-form">
-                <div class="form-group">
-                    <label for="coverage-address">Adresse</label>
-                    <input type="text" id="coverage-address" placeholder="F.eks. Storgata 1">
-                </div>
-                <div class="form-group">
-                    <label for="coverage-zip">Postnummer</label>
-                    <input type="text" id="coverage-zip" placeholder="4515" maxlength="4" inputmode="numeric">
-                </div>
-                <p id="coverage-status" style="margin-top: 6px; font-size: 0.88rem; color: var(--gray-text); min-height: 20px;"></p>
-                <p style="margin-top: 4px; font-size: 0.82rem; color: var(--gray-text);">Tilgjengelige pakker kan variere på adressen.</p>
-            </div>
-            <div class="navigation">
-                <button class="btn btn-back">Tilbake</button>
-                <button class="btn btn-next" id="coverage-next-btn" disabled>Neste</button>
-            </div>
-        </div>
-
-        <!-- Spørsmål 2: Antall personer -->
-        <div class="question-card" data-question="2">
             <h2>Hvor mange bruker nettet hjemme?</h2>
             <div class="options">
                 <div class="option" data-value="1" data-points="1">
@@ -150,8 +127,8 @@
             </div>
         </div>
 
-        <!-- Spørsmål 3: Bruksmønster -->
-        <div class="question-card" data-question="3">
+        <!-- Spørsmål 2: Bruksmønster -->
+        <div class="question-card" data-question="2">
             <h2>Hva bruker dere nettet til?</h2>
             <p class="multi-select-hint">Velg alt som passer</p>
             <div class="options" data-multi="true">
@@ -197,8 +174,8 @@
             </div>
         </div>
 
-        <!-- Spørsmål 4: Samtidige brukere -->
-        <div class="question-card" data-question="4">
+        <!-- Spørsmål 3: Samtidige brukere -->
+        <div class="question-card" data-question="3">
             <h2>Hvor ofte er flere på nett samtidig?</h2>
             <div class="options">
                 <div class="option" data-value="rarely" data-points="0">
@@ -229,8 +206,8 @@
             </div>
         </div>
 
-        <!-- Spørsmål 5: Stabilitet -->
-        <div class="question-card" data-question="5">
+        <!-- Spørsmål 4: Stabilitet -->
+        <div class="question-card" data-question="4">
             <h2>Hvor viktig er stabil linje for deg?</h2>
             <div class="options">
                 <div class="option" data-value="basic" data-points="0">
@@ -262,8 +239,8 @@
             </div>
         </div>
 
-        <!-- Spørsmål 6: Kontaktinfo -->
-        <div class="question-card" data-question="6">
+        <!-- Spørsmål 5: Kontaktinfo -->
+        <div class="question-card" data-question="5">
             <h2>Få et uforpliktende tilbud</h2>
             <p style="margin-bottom: 20px; font-size: 0.9rem; color: var(--gray-text);">Vi sender tilbud med anbefalt pakke for adressen din.</p>
             <div class="contact-form">
@@ -279,6 +256,15 @@
                     <label for="telefon">Telefon (valgfritt)</label>
                     <input type="tel" id="telefon" placeholder="99 99 99 99">
                 </div>
+                <div class="form-group">
+                    <label for="adresse">Adresse</label>
+                    <input type="text" id="adresse" placeholder="F.eks. Storgata 1">
+                </div>
+                <div class="form-group">
+                    <label for="postnummer">Postnummer</label>
+                    <input type="text" id="postnummer" placeholder="4515" maxlength="4" inputmode="numeric">
+                </div>
+                <p id="postnummer-status" style="margin-top: 4px; font-size: 0.84rem; color: var(--gray-text); min-height: 20px;"></p>
 
                 <p class="privacy-notice">
                     {{ module.privacy_policy_text || "Ved å sende inn godtar du at vi kontakter deg med et uforpliktende
